@@ -1,0 +1,10 @@
+export declare const navigationRef: import('@react-navigation/native').NavigationContainerRefWithCurrent<ReactNavigation.RootParamList>;
+export declare const navigate: (name: ScreenNameType, params?: any) => void;
+export declare const goBack: () => void;
+export declare const push: (name: ScreenNameType, params?: any) => void;
+export declare const pop: (count?: number) => void;
+export declare const popToTop: () => void;
+export declare const replace: (name: ScreenNameType, params?: any) => void;
+export declare const navigationDispatch: (action: any) => void;
+export declare const openDrawer: () => void;
+export declare const closeDrawer: () => void;

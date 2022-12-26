@@ -1,10 +1,23 @@
 {
   "name": "root",
   "private": true,
+  "scripts": {
+    "android": "lerna run android --scope='coffeeapp'",
+    "ios": "lerna run ios --scope='coffeeapp'",
+    "start": "react-native start",
+    "test": "jest",
+    "lint": "eslint . --ext .js,.jsx,.ts,.tsx",
+    "bootstrap": "lerna bootstrap",
+    "clean": "lerna clean --yes",
+    "pod": "lerna run pod --scope='coffeeapp'",
+    "build:ts-config": "lerna run build:ts --scope='config'",
+    "build:ts-graphql": "lerna run build:ts --scope='graphql-hook'",
+    "gen:graphql": "lerna run gen-graphql --scope='graphql-hook'"
+  },
   "workspaces": [
     "packages/*"
   ],
   "devDependencies": {
-    "lerna": "^6.1.0"
+    "lerna": "^6.0.1"
   }
 }
