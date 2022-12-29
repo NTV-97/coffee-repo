@@ -13,6 +13,8 @@ jobs:
     steps:
       - checkout
       - run: yarn install
+      - run: yarn global add yarn@1.22.10
+      - run: yarn --version
       - run: |
           yarn global add lerna@6.0.1
           echo 'export PATH="$PATH:`yarn global bin`"' >> $BASH_ENV
