@@ -1,6 +1,5 @@
-// prettier-ignore
 {
-  "extends": "@tsconfig/react-native/tsconfig.json",     /* Recommended React Native TSConfig base */
+  // "extends": "@tsconfig/react-native/tsconfig.json",     /* Recommended React Native TSConfig base */
   "compilerOptions": {
     /* Visit https://a
     "jsx": "react",ka.ms/tsconfig to read more about this file */
@@ -134,11 +133,12 @@
     "node_modules",
     "babel.config.js",
     "metro.config.js",
-    "jest.config.js"
-  ],
-  "include": [
-    "**/*.ts",
-    "index.ts",
-    "**/*.tsx",
-  ],
+    "jest.config.js",
+    "**/**.d.ts",
+    "react-native.config.js",
+    ".prettierrc.js",
+    "scripts",
+    "__tests__",
+    "android"
+  ]
 }

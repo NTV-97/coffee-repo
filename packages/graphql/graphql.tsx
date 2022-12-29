@@ -13,7 +13,7 @@ export type Scalars = {
   Boolean: boolean;
   Int: number;
   Float: number;
-  TypeUser: 'admin' | 'manage' | 'staff';
+  TypeUser: any;
 };
 
 export type Login = {
@@ -119,7 +119,7 @@ export type GetUsersQuery = {
   getUsers?: Array<{
     __typename?: 'User';
     id: string;
-    type: 'admin' | 'manage' | 'staff';
+    type: any;
     adminId?: string | null;
     email: string;
   } | null> | null;
