@@ -13,10 +13,9 @@ jobs:
     steps:
       - checkout
       - run: yarn install
-      - run: npx lerna bootstrap
+      - run: yarn bootstrap
       - run: |
           if [ "${CIRCLE_BRANCH}" == "master" ]; then
             yarn global add fastlane
             fastlane ios deploy
-            fastlane android deploy
           fi
