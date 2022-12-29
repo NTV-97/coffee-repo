@@ -13,7 +13,15 @@ jobs:
     steps:
       - checkout
       - run: yarn install
-      - run: yarn bootstrap
+      - run: 
+        name: Lerna install
+        command: |
+          yarn add global add lerna@6.0.1
+          echo 'export PATH="$PATH:`yarn global bin`"' >> $BASH_ENV
+      - run:
+        name: lerna bootstrap --no-ci
+        command: lerna bootstrap --no-ci
+        no_output_timeout: 20m
       - run: |
           if [ "${CIRCLE_BRANCH}" == "master" ]; then
             yarn global add fastlane
