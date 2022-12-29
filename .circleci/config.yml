@@ -27,11 +27,6 @@ commands:
   setup_to_build:
     description: 'setup to build app'
     steps:
-      - node/install:
-          node-version: 16.13.0
-          install-yarn: true
-          install-npm: true
-          yarn-version: '1.22.10'
       - run: node --version
       - run: yarn --version
       - run:
