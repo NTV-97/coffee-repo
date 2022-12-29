@@ -94,7 +94,6 @@ workflows:
   build-and-release:
     jobs:
       - npm_dependencies
-      - build-ios:
+      - build:
           requires:
             - npm_dependencies
-          - build
