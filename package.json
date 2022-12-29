@@ -1,11 +1,6 @@
 {
   "name": "root",
   "private": true,
-  "engines": {
-    "npm": "Please use yarn",
-    "yarn": ">= 1.22.10",
-    "lerna": ">= 6.0.1"
-  },
   "scripts": {
     "android": "lerna run android --scope='coffeeapp'",
     "ios": "lerna run ios --scope='coffeeapp'",
