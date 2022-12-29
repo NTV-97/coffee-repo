@@ -1,26 +1,100 @@
 version: 2.1
 
+orbs:
+  node: circleci/node@5.0.3
+
+references:
+  workspace_root: &workspace_root ~/project
+  container_config: &container_config
+    docker:
+      - image: circleci/node:16.13.0
+    working_directory: *workspace_root
+  attach_workspace: &attach_workspace
+    attach_workspace:
+      at: *workspace_root
+  lerna_install: &lerna_install
+    name: Lerna install
+    command: |
+      sudo yarn global add lerna@6.0.1
+      echo 'export PATH="$PATH:`yarn global bin`"' >> $BASH_ENV
+
 executors:
   ios-build-machine:
     macos:
       xcode: '13.4.1'
 
+commands:
+  setup_to_build:
+    description: 'setup to build app'
+    steps:
+      - node/install:
+          node-version: 16.13.0
+          install-yarn: true
+          install-npm: false
+          yarn-version: '1.22.10'
+      - run: node --version
+      - run: yarn --version
+      - run:
+          name: Lerna install
+          command: |
+            yarn global add lerna@6.0.1
+            echo 'export PATH="$PATH:`yarn global bin`"' >> $BASH_ENV
+      - run: 
+          name: lerna bootstrap --no-ci
+          command: lerna bootstrap --no-ci
+          no_output_timeout: 20m
+  setup_to_build_ios:
+    description: 'setup to build app'
+    steps:
+      - run:
+          name: jsbundle init
+          command: yarn ios-bundle
+      - run:
+          name: pod install
+          command: yarn pod
+          no_output_timeout: 15m
+
 jobs:
-  build:
-    docker:
-      - image: circleci/node:16.13.0
-    working_directory: ~/project
+  npm_dependencies:
+    <<: *container_config
     steps:
       - checkout
-      - run: yarn install
-      - run: yarn global add yarn@1.22.10
-      - run: yarn --version
-      - run: |
-          yarn global add lerna@6.0.1
-          echo 'export PATH="$PATH:`yarn global bin`"' >> $BASH_ENV
-      - run: lerna bootstrap --no-ci
-      - run: |
-          if [ "${CIRCLE_BRANCH}" == "master" ]; then
-            yarn global add fastlane
-            fastlane ios deploy
-          fi
+      - run: node --version
+      - run: *lerna_install
+      - run: 
+          name: lerna bootstrap --no-ci
+          command: lerna bootstrap --no-ci
+          no_output_timeout: 20m
+      - persist_to_workspace:
+          root: *workspace_root
+          paths:
+            - '*'
+            - '.*'
+  build:
+    executor: ios-build-machine
+    steps:
+      - checkout
+      - setup_to_build
+      - setup_to_build_ios
+      - run:
+          name: add fastlane
+          command: |
+              if [ "${CIRCLE_BRANCH}" == "master" ]; then
+                yarn global add fastlane
+              fi
+      - run:
+          name: fastlane ios
+          command: yarn build-deploygate
+      - run:
+          name: zip
+          command: yarn zip:adhoc
+          when: always
+
+workflows:
+  build-and-release:
+    jobs:
+      - npm_dependencies
+      - build-ios:
+          requires:
+            - npm_dependencies
+          - build
