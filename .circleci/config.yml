@@ -1,5 +1,20 @@
 version: 2.1
 
+references:
+  workspace_root: &workspace_root ~/project
+  container_config: &container_config
+    docker:
+      - image: circleci/node:16.13.0
+    working_directory: *workspace_root
+  attach_workspace: &attach_workspace
+    attach_workspace:
+      at: *workspace_root
+  lerna_install: &lerna_install
+    name: Lerna install
+    command: |
+      sudo yarn add global add lerna@6.0.1
+      echo 'export PATH="$PATH:`yarn global bin`"' >> $BASH_ENV
+
 executors:
   ios-build-machine:
     macos:
@@ -9,6 +24,7 @@ jobs:
   build:
     docker:
       - image: circleci/node:16.13.0
+    executor: ios-build-machine
     working_directory: ~/project
     steps:
       - checkout
