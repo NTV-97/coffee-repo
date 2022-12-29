@@ -5,6 +5,7 @@ export type Action = {
 };
 export type ContextType = {
   setToken: (token: string) => void;
+  state: State;
 };
 export type State = {
   token: string;

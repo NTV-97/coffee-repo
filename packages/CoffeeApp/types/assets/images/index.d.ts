@@ -1,3 +1,5 @@
 export declare const images: {
-  splash: any;
+    backgroundLogin: any;
+    banner: any;
+    splash: any;
 };

@@ -20,7 +20,7 @@ export type Scalars = {
   Boolean: boolean;
   Int: number;
   Float: number;
-  TypeUser: 'admin' | 'manage' | 'staff';
+  TypeUser: any;
 };
 export type Login = {
   __typename?: 'Login';
@@ -119,7 +119,7 @@ export type GetUsersQuery = {
   getUsers?: Array<{
     __typename?: 'User';
     id: string;
-    type: 'admin' | 'manage' | 'staff';
+    type: any;
     adminId?: string | null;
     email: string;
   } | null> | null;
@@ -154,7 +154,7 @@ export declare function useSignupMutation(
     email: string;
     phoneNumber: string;
     password: string;
-    type: 'admin' | 'manage' | 'staff';
+    type: any;
   }>,
   Apollo.DefaultContext,
   Apollo.ApolloCache<any>

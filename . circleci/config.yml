@@ -1,0 +1,22 @@
+version: 2.1
+
+executors:
+  ios-build-machine:
+    macos:
+      xcode: '13.4.1'
+
+jobs:
+  build:
+    docker:
+      - image: circleci/node:16.13.0
+    working_directory: ~/project
+    steps:
+      - checkout
+      - run: yarn install
+      - run: npx lerna bootstrap
+      - run: |
+          if [ "${CIRCLE_BRANCH}" == "master" ]; then
+            yarn global add fastlane
+            fastlane ios deploy
+            fastlane android deploy
+          fi
