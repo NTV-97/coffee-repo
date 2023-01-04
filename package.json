@@ -12,7 +12,10 @@
     "pod": "lerna run pod --scope='coffeeapp'",
     "build:ts-config": "lerna run build:ts --scope='config'",
     "build:ts-graphql": "lerna run build:ts --scope='graphql-hook'",
-    "gen:graphql": "lerna run gen-graphql --scope='graphql-hook'"
+    "gen:graphql": "lerna run gen-graphql --scope='graphql-hook'",
+    "ios-bundle": "npx react-native bundle --entry-file index.js --platform ios --dev false --bundle-output packages/CoffeeApp/ios/main.jsbundle --assets-dest packages/CoffeeApp/ios",
+    "build-deploygate": "lerna run build-deploygate --scope='coffeeapp'",
+    "zip:adhoc": "lerna run zip:adhoc --scope='coffeeapp'"
   },
   "workspaces": [
     "packages/*"
