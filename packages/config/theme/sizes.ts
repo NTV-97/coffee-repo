@@ -14,4 +14,5 @@ export const sizes = {
   caption: responsiveHeight(12),
   small: responsiveHeight(10),
   tiny: responsiveHeight(8),
+  biggest: responsiveHeight(46),
 };

@@ -9,6 +9,7 @@ interface IPropsText {
   h2?: boolean;
   h3?: boolean;
   h4?: boolean;
+  biggest?: boolean;
   title?: boolean;
   header?: boolean;
   body?: boolean;
@@ -67,6 +68,7 @@ export const Text: React.FC<IPropsText & TextProps> = ({
   h2,
   h3,
   h4,
+  biggest,
   title,
   header,
   body,
@@ -114,6 +116,7 @@ export const Text: React.FC<IPropsText & TextProps> = ({
     h2 && styles.h2,
     h3 && styles.h3,
     h4 && styles.h4,
+    biggest && styles.biggest,
     title && styles.title,
     header && styles.header,
     body && styles.body,
@@ -207,6 +210,7 @@ const styles = StyleSheet.create({
   h2: { fontSize: sizes.h2 },
   h3: { fontSize: sizes.h3 },
   h4: { fontSize: sizes.h4 },
+  biggest: { fontSize: sizes.biggest },
   title: { fontSize: sizes.title },
   header: { fontSize: sizes.header },
   body: { fontSize: sizes.body },

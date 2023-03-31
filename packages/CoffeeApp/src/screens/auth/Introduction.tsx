@@ -1,8 +1,8 @@
-import { ImageBackground, StyleSheet, TouchableOpacity } from 'react-native';
+import { Image, ImageBackground, StyleSheet, TouchableOpacity } from 'react-native';
 import React from 'react';
 import { DEFAULT_NAVBAR_HEIGHT, DEVICE, SCREEN_NAME, STATUS_BAR_HEIGHT } from 'config/constants';
 import { colors, sizes } from 'config/theme';
-import { Div, Text } from 'config/components';
+import { Div, Divider, Text } from 'config/components';
 import { images } from '../../assets';
 import { navigationUtils } from 'config/utils';
 
@@ -19,35 +19,58 @@ export const Introduction: React.FC = () => {
   };
 
   return (
-    <ImageBackground source={images.backgroundLogin} style={styles.imageBackground}>
-      <Div mt={STATUS_BAR_HEIGHT + DEFAULT_NAVBAR_HEIGHT} ml={sizes.base * 2}>
-        <Text white h1 medium>
-          One cup of
-        </Text>
-        <Div mt={sizes.base / 2}>
-          <Text white h1 medium>
-            coffee a day
-          </Text>
+    <ImageBackground source={images.backgroundIntro} style={styles.imageBackground}>
+      <Div flex={1} backgroundColor={colors.whiteOpacity}>
+        <Div mt={STATUS_BAR_HEIGHT + DEFAULT_NAVBAR_HEIGHT} flex={0.3} pt={sizes.base * 10}>
+          <Div width={sizes.base * 15} height={sizes.base * 15} wrap="wrap" centerSelf>
+            <Image source={images.logo} style={styles.imageLogo} resizeMode={'contain'} />
+          </Div>
         </Div>
-      </Div>
-      <Div flex={1} center middle>
-        <TouchableOpacity activeOpacity={0.7} onPress={onPressLogin}>
-          <Div
-            backgroundColor={colors.grayOpacity}
-            padding={[sizes.base * 2, sizes.base * 10]}
-            radius={sizes.base * 3}>
-            <Text bold h2 white>
-              Đăng nhập
-            </Text>
+        <Div flex={1} center mt={sizes.base * 6}>
+          <TouchableOpacity activeOpacity={0.7} onPress={onPressSignUp}>
+            <Div
+              green
+              padding={[sizes.base, sizes.base * 6]}
+              radius={sizes.base * 3}
+              shadow
+              borderWidth={0.5}>
+              <Text semibold h3>
+                Đăng Ký
+              </Text>
+            </Div>
+          </TouchableOpacity>
+          <Divider
+            width={sizes.base * 30}
+            margin={[sizes.base * 2, 0]}
+            color={colors.black}
+            height={sizes.base / 4}
+          />
+          <TouchableOpacity activeOpacity={0.7} onPress={onPressLogin}>
+            <Div
+              pink
+              padding={[sizes.base, sizes.base * 4]}
+              radius={sizes.base * 3}
+              shadow
+              borderWidth={0.5}>
+              <Text h3 semibold>
+                Đăng Nhập
+              </Text>
+            </Div>
+          </TouchableOpacity>
+          <Div flex={0.6} right endSelf mr={sizes.base * 2} mt={sizes.base * 12}>
+            <Div>
+              <Text h1 white semibold>
+                DO YOU
+              </Text>
+              <Text biggest bold spacing={1}>
+                REMEMBER
+              </Text>
+              <Text h1 semibold white>
+                THE FIRST TIME?
+              </Text>
+            </Div>
           </Div>
-        </TouchableOpacity>
-        <TouchableOpacity activeOpacity={0.7} onPress={onPressSignUp}>
-          <Div mt={sizes.base * 2}>
-            <Text white header>
-              Đăng ký
-            </Text>
-          </Div>
-        </TouchableOpacity>
+        </Div>
       </Div>
     </ImageBackground>
   );
@@ -57,5 +80,9 @@ const styles = StyleSheet.create({
   imageBackground: {
     width: WINDOW_WIDTH,
     height: WINDOW_HEIGHT,
+  },
+  imageLogo: {
+    width: '100%',
+    height: '100%',
   },
 });
