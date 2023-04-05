@@ -1,5 +1,5 @@
-query GetUsers {
-  getUsers {
+query GetUser($id: ID!) {
+  getUser(id: $id) {
     id
     name
     phoneNumber

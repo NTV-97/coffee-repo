@@ -1,0 +1,48 @@
+query getCart {
+  getCart {
+    id
+    user {
+      id
+      name
+      phoneNumber
+      address
+      email
+    }
+    items {
+      product {
+        id
+        name
+        price
+        image
+        category {
+          id
+          name
+          image
+          description
+          createdAt
+          updatedAt
+        }
+        description
+        details {
+          size {
+            name
+            price
+          }
+          topping {
+            name
+            price
+          }
+        }
+        createdAt
+        updatedAt
+      }
+      quantity
+      size
+      toppings
+      price
+    }
+    totalPrice
+    createdAt
+    updatedAt
+  }
+}

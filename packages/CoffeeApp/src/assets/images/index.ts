@@ -9,4 +9,5 @@ export const images = {
   news1: require('./news1.jpeg'),
   logo: require('./logo.png'),
   splash: require('./splash.png'),
+  register: require('./register.png'),
 };

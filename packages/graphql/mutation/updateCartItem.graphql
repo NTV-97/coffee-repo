@@ -1,0 +1,26 @@
+mutation updateCartItem($itemsUpdate: [CartItemUpdateInput!]!) {
+  updateCartItem(itemsUpdate: $itemsUpdate) {
+    id
+    user {
+      id
+      name
+      phoneNumber
+      address
+    }
+    items {
+      product {
+        id
+        name
+        price
+        image
+      }
+      quantity
+      size
+      toppings
+      price
+    }
+    totalPrice
+    createdAt
+    updatedAt
+  }
+}

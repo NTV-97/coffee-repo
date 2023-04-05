@@ -1,3 +1,4 @@
+// eslint-disable @typescript-eslint/no-shadow
 import React, { useContext, useState } from 'react';
 import {
   Alert,
@@ -15,7 +16,6 @@ import { sizes, colors } from 'config/theme';
 import { AppLoading, Div, Text } from 'config/components';
 import { useSignupMutation } from 'graphql-hook';
 import { SignupMutationVariables } from 'graphql-hook';
-import { useLoginMutation } from 'graphql-hook';
 import { Context } from 'config/context';
 import { storage } from 'config/utils';
 
@@ -56,20 +56,24 @@ const loginValidationSchema = yup.object().shape({
     .string()
     .required('Vui lòng nhập mật khẩu')
     .oneOf([yup.ref('password'), null], 'Mật khẩu không giống nhau'),
+  address: yup.string(),
+  name: yup.string(),
 });
 
 type VariablesSignUpType = {
-  phoneNumber: string;
   email: string;
+  phoneNumber: string;
   password: string;
+  address: string;
+  name: string;
   confirmPwd: string;
 };
 
 export const SignUpScreen: React.FC = () => {
   const [signUp, { loading }] = useSignupMutation({
     onCompleted(data) {
-      if (data.signup.success) {
-        onSignUpCompleted();
+      if (data.signup.message === 'success' && data.signup.token?.length) {
+        onLoginCompleted(data.signup.token);
       } else {
         Alert.alert(data.signup.message);
       }
@@ -78,75 +82,50 @@ export const SignUpScreen: React.FC = () => {
       Alert.alert(error.message);
     },
   });
-  const [login] = useLoginMutation({
-    onCompleted(data) {
-      if (data.login.token?.length) {
-        onLoginCompleted(data.login.token);
-      } else {
-        Alert.alert(data.login.message);
-      }
-    },
-    onError(error) {
-      Alert.alert(error.message);
-    },
-  });
 
-  const _variablesSignUp = {
-    phoneNumber: '',
+  const variablesSignUp = {
     email: '',
+    phoneNumber: '',
     password: '',
+    address: '',
+    name: '',
     confirmPwd: '',
   };
   const { setToken } = useContext(Context);
-
-  const [variablesSignUp, setVariablesSignUp] = useState<SignupMutationVariables>({
-    email: '',
-    password: '',
-    phoneNumber: '',
-    type: 'admin',
-  });
 
   const onLoginCompleted = (token: string) => {
     setItem('token', token);
     setToken(token);
   };
 
-  const onSignUpCompleted = () => {
-    login({
-      variables: {
-        email: variablesSignUp.email,
-        password: variablesSignUp.password,
-        phoneNumber: variablesSignUp.phoneNumber,
+  const onSubmitSignUp = (_variables: VariablesSignUpType) => {
+    const variables: SignupMutationVariables = {
+      registerInput: {
+        email: _variables.email,
+        phoneNumber: _variables.phoneNumber,
+        password: _variables.password,
+        address: _variables.address,
+        name: _variables.name,
       },
-    });
-  };
-
-  const onSubmitSignUp = (variables: VariablesSignUpType) => {
-    const _variables: SignupMutationVariables = {
-      email: variables.email,
-      phoneNumber: variables.phoneNumber,
-      password: variables.password,
-      type: 'admin',
     };
-    setVariablesSignUp(_variables);
-    signUp({ variables: _variables });
+    signUp({ variables });
   };
 
   return (
     <Div backgroundColor={colors.darkOpacity} flex={1}>
-      <Div
-        width={SCREEN_WIDTH}
-        height={WINDOW_HEIGHT / 2}
-        overflow="hidden"
-        flex={1}
-        style={styles.bottomRadius}>
-        <Image source={images.banner} />
+      <Div width={SCREEN_WIDTH} height={WINDOW_HEIGHT / 2} overflow="hidden" flex={1}>
+        <Image source={images.register} />
       </Div>
-      <Div mt={sizes.base * 2} flex={1}>
+      <Div flex={1} white>
+        <Div center margin={[sizes.base, 0]}>
+          <Text title semibold black>
+            Đăng ký tài khoản
+          </Text>
+        </Div>
         <Div flex={1}>
           <Formik
             validationSchema={loginValidationSchema}
-            initialValues={_variablesSignUp}
+            initialValues={variablesSignUp}
             validateOnBlur
             onSubmit={onSubmitSignUp}>
             {({ handleChange, handleBlur, handleSubmit, values, errors, isValid }) => (
@@ -154,11 +133,11 @@ export const SignUpScreen: React.FC = () => {
                 <Div>
                   <Div
                     mt={sizes.base}
-                    borderWidth={1}
-                    radius={sizes.radius}
+                    radius={sizes.radius * 2}
                     pl={sizes.base}
-                    height={sizes.base * 5}
-                    backgroundColor={colors.white}>
+                    height={sizes.base * 6}
+                    backgroundColor={colors.green}
+                    shadow>
                     <TextInput
                       placeholder="Số điện thoại"
                       onChangeText={handleChange('phoneNumber')}
@@ -169,7 +148,7 @@ export const SignUpScreen: React.FC = () => {
                       keyboardType="numeric"
                       style={styles.textInput}
                       allowFontScaling={false}
-                      placeholderTextColor={colors.borderGray}
+                      placeholderTextColor={colors.black}
                     />
                   </Div>
                   <Div mt={sizes.base / 2}>
@@ -181,11 +160,11 @@ export const SignUpScreen: React.FC = () => {
                 <Div>
                   <Div
                     mt={sizes.base}
-                    borderWidth={1}
-                    radius={sizes.radius}
+                    radius={sizes.radius * 2}
                     pl={sizes.base}
-                    height={sizes.base * 5}
-                    backgroundColor={colors.white}>
+                    height={sizes.base * 6}
+                    backgroundColor={colors.green}
+                    shadow>
                     <TextInput
                       placeholder="Email"
                       onChangeText={handleChange('email')}
@@ -195,7 +174,7 @@ export const SignUpScreen: React.FC = () => {
                       autoCapitalize="none"
                       style={styles.textInput}
                       allowFontScaling={false}
-                      placeholderTextColor={colors.borderGray}
+                      placeholderTextColor={colors.black}
                     />
                   </Div>
                   <Div mt={sizes.base / 2}>
@@ -207,13 +186,13 @@ export const SignUpScreen: React.FC = () => {
                 <Div>
                   <Div
                     mt={sizes.base}
-                    borderWidth={1}
-                    radius={sizes.radius}
+                    radius={sizes.radius * 2}
                     pl={sizes.base}
-                    height={sizes.base * 5}
-                    backgroundColor={colors.white}>
+                    height={sizes.base * 6}
+                    backgroundColor={colors.green}
+                    shadow>
                     <TextInput
-                      placeholder="Password"
+                      placeholder="Mật khẩu"
                       onChangeText={handleChange('password')}
                       onBlur={handleBlur('password')}
                       value={values.password}
@@ -221,7 +200,7 @@ export const SignUpScreen: React.FC = () => {
                       returnKeyType="next"
                       style={styles.textInput}
                       allowFontScaling={false}
-                      placeholderTextColor={colors.borderGray}
+                      placeholderTextColor={colors.black}
                     />
                   </Div>
                   <Div mt={sizes.base / 2}>
@@ -233,13 +212,13 @@ export const SignUpScreen: React.FC = () => {
                 <Div>
                   <Div
                     mt={sizes.base}
-                    borderWidth={1}
-                    radius={sizes.radius}
+                    radius={sizes.radius * 2}
                     pl={sizes.base}
-                    height={sizes.base * 5}
-                    backgroundColor={colors.white}>
+                    height={sizes.base * 6}
+                    backgroundColor={colors.green}
+                    shadow>
                     <TextInput
-                      placeholder="Confirm password"
+                      placeholder="Nhập lại mật khẩu"
                       onChangeText={handleChange('confirmPwd')}
                       onBlur={handleBlur('confirmPwd')}
                       value={values.confirmPwd}
@@ -249,7 +228,7 @@ export const SignUpScreen: React.FC = () => {
                       onSubmitEditing={handleSubmit}
                       style={styles.textInput}
                       allowFontScaling={false}
-                      placeholderTextColor={colors.borderGray}
+                      placeholderTextColor={colors.black}
                     />
                   </Div>
                   <Div mt={sizes.base / 2}>
@@ -261,7 +240,7 @@ export const SignUpScreen: React.FC = () => {
                 {/* @ts-ignore */}
                 <TouchableOpacity onPress={handleSubmit} disabled={!isValid}>
                   <Div
-                    black
+                    pink
                     padding={sizes.base}
                     radius={sizes.radius * 4}
                     center
@@ -269,7 +248,7 @@ export const SignUpScreen: React.FC = () => {
                     centerSelf
                     height={sizes.base * 5}
                     width={sizes.base * 20}
-                    mt={sizes.base * 2}>
+                    mt={sizes.base}>
                     <Text header white semibold>
                       Đăng ký
                     </Text>
@@ -289,10 +268,6 @@ const styles = StyleSheet.create({
   image: {
     width: '100%',
     height: '100%',
-  },
-  bottomRadius: {
-    borderBottomLeftRadius: sizes.radius * 7,
-    borderBottomRightRadius: sizes.radius * 7,
   },
   textInput: {
     width: '100%',

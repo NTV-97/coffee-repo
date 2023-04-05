@@ -8,6 +8,12 @@ module.exports = {
     'react-hooks/rules-of-hooks': 'off',
     '@typescript-eslint/no-unused-vars': 'off',
     'react/react-in-jsx-scope': 'off',
+    'prettier/prettier': [
+      'error',
+      {
+        'endOfLine': 'auto',
+      }
+    ]
   },
   parser: '@typescript-eslint/parser',
   plugins: ['@typescript-eslint/eslint-plugin'],

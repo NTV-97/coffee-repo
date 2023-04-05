@@ -1,0 +1,27 @@
+query getProducts {
+  getProducts {
+    id
+    name
+    price
+    image
+    category {
+      id
+      name
+      image
+      description
+      createdAt
+      updatedAt
+    }
+    description
+    details {
+      size {
+        name
+        price
+      }
+      topping {
+        name
+        price
+      }
+    }
+  }
+}
