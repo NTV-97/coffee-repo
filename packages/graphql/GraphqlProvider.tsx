@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { ApolloProvider, ApolloClient, HttpLink, InMemoryCache, ApolloLink } from '@apollo/client';
 import { constants, utils } from 'config';
 import { onError } from '@apollo/client/link/error';
@@ -51,19 +51,28 @@ const createClient = (_link: HttpLink) => {
 type IPropsGraphqlProvider = {
   children?: React.ReactNode | React.ReactNode[];
 };
-export const GraphqlProvider: React.FC<IPropsGraphqlProvider> = ({ children }) => {
-  // const { session } = useSelector((store: RootState) => store);
-  const [token, setToken] = useState('');
-  const link = createHttpLink(token);
-  const client = createClient(link);
-  useEffect(() => {
+
+export class GraphqlProvider extends React.Component<IPropsGraphqlProvider, { token: string }> {
+  constructor(props: IPropsGraphqlProvider) {
+    super(props);
+    this.state = {
+      token: '',
+    };
+  }
+  componentDidMount() {
     const getToken = async () => {
       const _token = await storage.getItem('token');
       if (_token) {
-        setToken(_token);
+        this.setState({ token: _token });
       }
     };
     getToken();
-  }, []);
-  return <ApolloProvider client={client}>{children}</ApolloProvider>;
-};
+  }
+
+  render() {
+    const { token } = this.state;
+    const link = createHttpLink(token);
+    const client = createClient(link);
+    return <ApolloProvider client={client}>{this.props.children}</ApolloProvider>;
+  }
+}

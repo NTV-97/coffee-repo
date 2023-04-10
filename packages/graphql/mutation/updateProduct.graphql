@@ -1,0 +1,26 @@
+mutation updateProduct($id: ID!, $product: ProductInput!) {
+  updateProduct(id: $id, product: $product) {
+    id
+    name
+    price
+    image
+    category {
+      id
+      name
+      image
+    }
+    description
+    details {
+      size {
+        name
+        price
+      }
+      topping {
+        name
+        price
+      }
+    }
+    createdAt
+    updatedAt
+  }
+}

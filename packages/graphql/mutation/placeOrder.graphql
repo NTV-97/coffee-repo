@@ -1,0 +1,50 @@
+mutation PlaceOrder($idCart: ID!, $note: String) {
+  placeOrder(idCart: $idCart, note: $note) {
+    id
+    user {
+      id
+      name
+      phoneNumber
+      address
+      email
+    }
+    items {
+      product {
+        id
+        name
+        price
+        image
+        category {
+          id
+          name
+          image
+          description
+          createdAt
+          updatedAt
+        }
+        description
+        details {
+          size {
+            name
+            price
+          }
+          topping {
+            name
+            price
+          }
+        }
+        createdAt
+        updatedAt
+      }
+      quantity
+      size
+      toppings
+      price
+    }
+    totalPrice
+    status
+    note
+    createdAt
+    updatedAt
+  }
+}

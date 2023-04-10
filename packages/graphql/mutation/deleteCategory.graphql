@@ -1,0 +1,10 @@
+mutation deleteCategory($id: ID!) {
+  deleteCategory(id: $id) {
+    id
+    name
+    image
+    description
+    createdAt
+    updatedAt
+  }
+}

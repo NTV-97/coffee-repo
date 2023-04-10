@@ -5,7 +5,7 @@ import React from 'react';
 import { MainStack } from './navigator';
 
 const App: React.FC = () => {
-  const { state, context } = ContextProvider();
+  const { context } = ContextProvider();
   return (
     <Context.Provider value={context}>
       <GraphqlProvider>

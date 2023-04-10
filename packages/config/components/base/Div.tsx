@@ -345,10 +345,10 @@ const styles = StyleSheet.create({
   },
   shadow: {
     shadowColor: colors.black,
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 13,
-    elevation: 2,
+    shadowOffset: { width: 0, height: 6 },
+    shadowOpacity: 0.8,
+    shadowRadius: 16,
+    elevation: 6,
   },
 
   // color

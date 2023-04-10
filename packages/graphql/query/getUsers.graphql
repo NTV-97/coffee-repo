@@ -1,8 +1,9 @@
 query GetUsers {
-    getUsers {
-      id
-      type
-      adminId
-      email
-    }
+  getUsers {
+    id
+    name
+    phoneNumber
+    address
+    email
+  }
 }
