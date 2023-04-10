@@ -126,7 +126,8 @@ export type MutationLoginArgs = {
   phoneNumber?: InputMaybe<Scalars['String']>;
 };
 export type MutationPlaceOrderArgs = {
-  products: Array<ProductOrderInput>;
+  idCart: Scalars['ID'];
+  note?: InputMaybe<Scalars['String']>;
 };
 export type MutationRemoveFromCartArgs = {
   cartItemIndex: Scalars['Int'];
@@ -151,12 +152,22 @@ export type MutationUpdateProductArgs = {
 };
 export type Order = {
   __typename?: 'Order';
-  createdAt: Scalars['Date'];
+  createdAt?: Maybe<Scalars['Date']>;
   id: Scalars['ID'];
-  products: Array<ProductOrder>;
+  items: Array<OrderItem>;
+  note: Scalars['String'];
   status: OrderStatus;
-  total: Scalars['Float'];
+  totalPrice: Scalars['Float'];
+  updatedAt?: Maybe<Scalars['Date']>;
   user: User;
+};
+export type OrderItem = {
+  __typename?: 'OrderItem';
+  price: Scalars['Float'];
+  product?: Maybe<Product>;
+  quantity: Scalars['Int'];
+  size: Scalars['String'];
+  toppings?: Maybe<Array<Maybe<Scalars['String']>>>;
 };
 export declare enum OrderStatus {
   Cancelled = 'CANCELLED',
@@ -193,37 +204,25 @@ export type ProductInput = {
   name: Scalars['String'];
   price: Scalars['Float'];
 };
-export type ProductOrder = {
-  __typename?: 'ProductOrder';
-  product: Product;
-  quantity: Scalars['Int'];
-};
-export type ProductOrderInput = {
-  productId: Scalars['ID'];
-  quantity: Scalars['Int'];
-};
 export type Query = {
   __typename?: 'Query';
   getCart?: Maybe<Cart>;
   getCategories: Array<Category>;
   getCategory?: Maybe<Category>;
+  getOrder?: Maybe<Order>;
+  getOrders: Array<Order>;
   getProduct?: Maybe<Product>;
   getProducts?: Maybe<Array<Maybe<Product>>>;
   getUser: User;
   getUsers?: Maybe<Array<User>>;
-  order?: Maybe<Order>;
-  orders: Array<Order>;
 };
 export type QueryGetCategoryArgs = {
   id: Scalars['ID'];
 };
+export type QueryGetOrderArgs = {
+  id: Scalars['ID'];
+};
 export type QueryGetProductArgs = {
-  id: Scalars['ID'];
-};
-export type QueryGetUserArgs = {
-  id: Scalars['ID'];
-};
-export type QueryOrderArgs = {
   id: Scalars['ID'];
 };
 export type RegisterInput = {
@@ -294,6 +293,68 @@ export type AddToCartMutation = {
         name: string;
         price: number;
         image?: string | null;
+      } | null;
+    }>;
+  } | null;
+};
+export type CancelOrderMutationVariables = Exact<{
+  id: Scalars['ID'];
+}>;
+export type CancelOrderMutation = {
+  __typename?: 'Mutation';
+  cancelOrder?: {
+    __typename?: 'Order';
+    id: string;
+    totalPrice: number;
+    status: OrderStatus;
+    note: string;
+    createdAt?: any | null;
+    updatedAt?: any | null;
+    user: {
+      __typename?: 'User';
+      id: string;
+      name?: string | null;
+      phoneNumber: string;
+      address?: string | null;
+      email: string;
+    };
+    items: Array<{
+      __typename?: 'OrderItem';
+      quantity: number;
+      size: string;
+      toppings?: Array<string | null> | null;
+      price: number;
+      product?: {
+        __typename?: 'Product';
+        id: string;
+        name: string;
+        price: number;
+        image?: string | null;
+        description?: string | null;
+        createdAt: any;
+        updatedAt: any;
+        category: {
+          __typename?: 'Category';
+          id: string;
+          name: string;
+          image?: string | null;
+          description?: string | null;
+          createdAt: any;
+          updatedAt: any;
+        };
+        details?: {
+          __typename?: 'ProductDetail';
+          size?: Array<{
+            __typename?: 'Size';
+            name: string;
+            price: number;
+          } | null> | null;
+          topping?: Array<{
+            __typename?: 'Topping';
+            name: string;
+            price: number;
+          } | null> | null;
+        } | null;
       } | null;
     }>;
   } | null;
@@ -463,6 +524,69 @@ export type LoginMutation = {
     message: string;
     token?: string | null;
   };
+};
+export type PlaceOrderMutationVariables = Exact<{
+  idCart: Scalars['ID'];
+  note?: InputMaybe<Scalars['String']>;
+}>;
+export type PlaceOrderMutation = {
+  __typename?: 'Mutation';
+  placeOrder?: {
+    __typename?: 'Order';
+    id: string;
+    totalPrice: number;
+    status: OrderStatus;
+    note: string;
+    createdAt?: any | null;
+    updatedAt?: any | null;
+    user: {
+      __typename?: 'User';
+      id: string;
+      name?: string | null;
+      phoneNumber: string;
+      address?: string | null;
+      email: string;
+    };
+    items: Array<{
+      __typename?: 'OrderItem';
+      quantity: number;
+      size: string;
+      toppings?: Array<string | null> | null;
+      price: number;
+      product?: {
+        __typename?: 'Product';
+        id: string;
+        name: string;
+        price: number;
+        image?: string | null;
+        description?: string | null;
+        createdAt: any;
+        updatedAt: any;
+        category: {
+          __typename?: 'Category';
+          id: string;
+          name: string;
+          image?: string | null;
+          description?: string | null;
+          createdAt: any;
+          updatedAt: any;
+        };
+        details?: {
+          __typename?: 'ProductDetail';
+          size?: Array<{
+            __typename?: 'Size';
+            name: string;
+            price: number;
+          } | null> | null;
+          topping?: Array<{
+            __typename?: 'Topping';
+            name: string;
+            price: number;
+          } | null> | null;
+        } | null;
+      } | null;
+    }>;
+  } | null;
 };
 export type RemoveFromCartMutationVariables = Exact<{
   cartItemIndex: Scalars['Int'];
@@ -681,6 +805,130 @@ export type GetCategoryQuery = {
     description?: string | null;
   } | null;
 };
+export type GetOrderQueryVariables = Exact<{
+  id: Scalars['ID'];
+}>;
+export type GetOrderQuery = {
+  __typename?: 'Query';
+  getOrder?: {
+    __typename?: 'Order';
+    id: string;
+    totalPrice: number;
+    status: OrderStatus;
+    note: string;
+    createdAt?: any | null;
+    updatedAt?: any | null;
+    user: {
+      __typename?: 'User';
+      id: string;
+      name?: string | null;
+      phoneNumber: string;
+      address?: string | null;
+      email: string;
+    };
+    items: Array<{
+      __typename?: 'OrderItem';
+      quantity: number;
+      size: string;
+      toppings?: Array<string | null> | null;
+      price: number;
+      product?: {
+        __typename?: 'Product';
+        id: string;
+        name: string;
+        price: number;
+        image?: string | null;
+        description?: string | null;
+        createdAt: any;
+        updatedAt: any;
+        category: {
+          __typename?: 'Category';
+          id: string;
+          name: string;
+          image?: string | null;
+          description?: string | null;
+          createdAt: any;
+          updatedAt: any;
+        };
+        details?: {
+          __typename?: 'ProductDetail';
+          size?: Array<{
+            __typename?: 'Size';
+            name: string;
+            price: number;
+          } | null> | null;
+          topping?: Array<{
+            __typename?: 'Topping';
+            name: string;
+            price: number;
+          } | null> | null;
+        } | null;
+      } | null;
+    }>;
+  } | null;
+};
+export type GetOrdersQueryVariables = Exact<{
+  [key: string]: never;
+}>;
+export type GetOrdersQuery = {
+  __typename?: 'Query';
+  getOrders: Array<{
+    __typename?: 'Order';
+    id: string;
+    totalPrice: number;
+    status: OrderStatus;
+    note: string;
+    createdAt?: any | null;
+    updatedAt?: any | null;
+    user: {
+      __typename?: 'User';
+      id: string;
+      name?: string | null;
+      phoneNumber: string;
+      address?: string | null;
+      email: string;
+    };
+    items: Array<{
+      __typename?: 'OrderItem';
+      quantity: number;
+      size: string;
+      toppings?: Array<string | null> | null;
+      price: number;
+      product?: {
+        __typename?: 'Product';
+        id: string;
+        name: string;
+        price: number;
+        image?: string | null;
+        description?: string | null;
+        createdAt: any;
+        updatedAt: any;
+        category: {
+          __typename?: 'Category';
+          id: string;
+          name: string;
+          image?: string | null;
+          description?: string | null;
+          createdAt: any;
+          updatedAt: any;
+        };
+        details?: {
+          __typename?: 'ProductDetail';
+          size?: Array<{
+            __typename?: 'Size';
+            name: string;
+            price: number;
+          } | null> | null;
+          topping?: Array<{
+            __typename?: 'Topping';
+            name: string;
+            price: number;
+          } | null> | null;
+        } | null;
+      } | null;
+    }>;
+  }>;
+};
 export type GetProductQueryVariables = Exact<{
   id: Scalars['ID'];
 }>;
@@ -754,7 +1002,7 @@ export type GetProductsQuery = {
   } | null> | null;
 };
 export type GetUserQueryVariables = Exact<{
-  id: Scalars['ID'];
+  [key: string]: never;
 }>;
 export type GetUserQuery = {
   __typename?: 'Query';
@@ -801,6 +1049,27 @@ export type AddToCartMutationResult = Apollo.MutationResult<AddToCartMutation>;
 export type AddToCartMutationOptions = Apollo.BaseMutationOptions<
   AddToCartMutation,
   AddToCartMutationVariables
+>;
+export declare const CancelOrderDocument: Apollo.DocumentNode;
+export type CancelOrderMutationFn = Apollo.MutationFunction<
+  CancelOrderMutation,
+  CancelOrderMutationVariables
+>;
+export declare function useCancelOrderMutation(
+  baseOptions?: Apollo.MutationHookOptions<CancelOrderMutation, CancelOrderMutationVariables>,
+): Apollo.MutationTuple<
+  CancelOrderMutation,
+  Exact<{
+    id: string;
+  }>,
+  Apollo.DefaultContext,
+  Apollo.ApolloCache<any>
+>;
+export type CancelOrderMutationHookResult = ReturnType<typeof useCancelOrderMutation>;
+export type CancelOrderMutationResult = Apollo.MutationResult<CancelOrderMutation>;
+export type CancelOrderMutationOptions = Apollo.BaseMutationOptions<
+  CancelOrderMutation,
+  CancelOrderMutationVariables
 >;
 export declare const ClearCartDocument: Apollo.DocumentNode;
 export type ClearCartMutationFn = Apollo.MutationFunction<
@@ -952,6 +1221,28 @@ export type LoginMutationResult = Apollo.MutationResult<LoginMutation>;
 export type LoginMutationOptions = Apollo.BaseMutationOptions<
   LoginMutation,
   LoginMutationVariables
+>;
+export declare const PlaceOrderDocument: Apollo.DocumentNode;
+export type PlaceOrderMutationFn = Apollo.MutationFunction<
+  PlaceOrderMutation,
+  PlaceOrderMutationVariables
+>;
+export declare function usePlaceOrderMutation(
+  baseOptions?: Apollo.MutationHookOptions<PlaceOrderMutation, PlaceOrderMutationVariables>,
+): Apollo.MutationTuple<
+  PlaceOrderMutation,
+  Exact<{
+    idCart: string;
+    note?: InputMaybe<string> | undefined;
+  }>,
+  Apollo.DefaultContext,
+  Apollo.ApolloCache<any>
+>;
+export type PlaceOrderMutationHookResult = ReturnType<typeof usePlaceOrderMutation>;
+export type PlaceOrderMutationResult = Apollo.MutationResult<PlaceOrderMutation>;
+export type PlaceOrderMutationOptions = Apollo.BaseMutationOptions<
+  PlaceOrderMutation,
+  PlaceOrderMutationVariables
 >;
 export declare const RemoveFromCartDocument: Apollo.DocumentNode;
 export type RemoveFromCartMutationFn = Apollo.MutationFunction<
@@ -1145,6 +1436,60 @@ export declare function refetchGetCategoryQuery(variables: GetCategoryQueryVaria
     id: string;
   }>;
 };
+export declare const GetOrderDocument: Apollo.DocumentNode;
+export declare function useGetOrderQuery(
+  baseOptions: Apollo.QueryHookOptions<GetOrderQuery, GetOrderQueryVariables>,
+): Apollo.QueryResult<
+  GetOrderQuery,
+  Exact<{
+    id: string;
+  }>
+>;
+export declare function useGetOrderLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<GetOrderQuery, GetOrderQueryVariables>,
+): Apollo.LazyQueryResultTuple<
+  GetOrderQuery,
+  Exact<{
+    id: string;
+  }>
+>;
+export type GetOrderQueryHookResult = ReturnType<typeof useGetOrderQuery>;
+export type GetOrderLazyQueryHookResult = ReturnType<typeof useGetOrderLazyQuery>;
+export type GetOrderQueryResult = Apollo.QueryResult<GetOrderQuery, GetOrderQueryVariables>;
+export declare function refetchGetOrderQuery(variables: GetOrderQueryVariables): {
+  query: Apollo.DocumentNode;
+  variables: Exact<{
+    id: string;
+  }>;
+};
+export declare const GetOrdersDocument: Apollo.DocumentNode;
+export declare function useGetOrdersQuery(
+  baseOptions?: Apollo.QueryHookOptions<GetOrdersQuery, GetOrdersQueryVariables>,
+): Apollo.QueryResult<
+  GetOrdersQuery,
+  Exact<{
+    [key: string]: never;
+  }>
+>;
+export declare function useGetOrdersLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<GetOrdersQuery, GetOrdersQueryVariables>,
+): Apollo.LazyQueryResultTuple<
+  GetOrdersQuery,
+  Exact<{
+    [key: string]: never;
+  }>
+>;
+export type GetOrdersQueryHookResult = ReturnType<typeof useGetOrdersQuery>;
+export type GetOrdersLazyQueryHookResult = ReturnType<typeof useGetOrdersLazyQuery>;
+export type GetOrdersQueryResult = Apollo.QueryResult<GetOrdersQuery, GetOrdersQueryVariables>;
+export declare function refetchGetOrdersQuery(variables?: GetOrdersQueryVariables): {
+  query: Apollo.DocumentNode;
+  variables:
+    | Exact<{
+        [key: string]: never;
+      }>
+    | undefined;
+};
 export declare const GetProductDocument: Apollo.DocumentNode;
 export declare function useGetProductQuery(
   baseOptions: Apollo.QueryHookOptions<GetProductQuery, GetProductQueryVariables>,
@@ -1204,11 +1549,11 @@ export declare function refetchGetProductsQuery(variables?: GetProductsQueryVari
 };
 export declare const GetUserDocument: Apollo.DocumentNode;
 export declare function useGetUserQuery(
-  baseOptions: Apollo.QueryHookOptions<GetUserQuery, GetUserQueryVariables>,
+  baseOptions?: Apollo.QueryHookOptions<GetUserQuery, GetUserQueryVariables>,
 ): Apollo.QueryResult<
   GetUserQuery,
   Exact<{
-    id: string;
+    [key: string]: never;
   }>
 >;
 export declare function useGetUserLazyQuery(
@@ -1216,17 +1561,19 @@ export declare function useGetUserLazyQuery(
 ): Apollo.LazyQueryResultTuple<
   GetUserQuery,
   Exact<{
-    id: string;
+    [key: string]: never;
   }>
 >;
 export type GetUserQueryHookResult = ReturnType<typeof useGetUserQuery>;
 export type GetUserLazyQueryHookResult = ReturnType<typeof useGetUserLazyQuery>;
 export type GetUserQueryResult = Apollo.QueryResult<GetUserQuery, GetUserQueryVariables>;
-export declare function refetchGetUserQuery(variables: GetUserQueryVariables): {
+export declare function refetchGetUserQuery(variables?: GetUserQueryVariables): {
   query: Apollo.DocumentNode;
-  variables: Exact<{
-    id: string;
-  }>;
+  variables:
+    | Exact<{
+        [key: string]: never;
+      }>
+    | undefined;
 };
 export declare const GetUsersDocument: Apollo.DocumentNode;
 export declare function useGetUsersQuery(

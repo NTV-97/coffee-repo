@@ -1,5 +1,5 @@
 import React, { useContext } from 'react';
-import { Alert, Image, StyleSheet, TextInput, TouchableOpacity } from 'react-native';
+import { Alert, ImageBackground, StyleSheet, TextInput, TouchableOpacity } from 'react-native';
 import { fonts, images } from '../../assets';
 import { SCREEN_NAME, DEVICE } from 'config/constants';
 import { Div, Text, AppLoading } from 'config/components';
@@ -13,7 +13,7 @@ import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { RootStackParamList } from '@navigator/types';
 import { Context } from 'config/context';
 
-const { WINDOW_HEIGHT, SCREEN_WIDTH } = DEVICE;
+const { WINDOW_HEIGHT, SCREEN_WIDTH, WINDOW_WIDTH } = DEVICE;
 const { SIGN_IN, SIGN_UP } = SCREEN_NAME;
 const { navigate } = navigationUtils;
 const { setItem } = storage;
@@ -91,137 +91,126 @@ export const SignInScreen: React.FC<
     }
   };
 
-  const onPressSignUp = () => {
-    navigate(SIGN_UP);
-  };
-
   return (
-    <Div backgroundColor={colors.darkOpacity} flex={1}>
-      <Div
-        width={SCREEN_WIDTH}
-        height={WINDOW_HEIGHT / 2}
-        overflow="hidden"
-        flex={1}
-        style={styles.bottomRadius}>
-        <Image source={images.banner} />
-      </Div>
-      <Div mt={sizes.base * 3} flex={1}>
-        <Div center>
-          <Text medium white h2>
-            {'Đăng nhập'.toUpperCase()}
-          </Text>
-        </Div>
-        <Div flex={1}>
-          <Formik
-            validationSchema={loginValidationSchema}
-            initialValues={variablesLogin}
-            validateOnBlur
-            onSubmit={onSubmitLogin}>
-            {({ handleChange, handleBlur, handleSubmit, values, errors, isValid }) => (
-              <Div flex={1} margin={[sizes.base, sizes.base * 2]}>
-                <Div>
-                  <Div
-                    mt={sizes.base}
-                    borderWidth={1}
-                    radius={sizes.radius}
-                    pl={sizes.base}
-                    height={sizes.base * 5}
-                    backgroundColor={colors.white}>
-                    <TextInput
-                      placeholder="Phone number or E-mail"
-                      onChangeText={handleChange('email')}
-                      onBlur={handleBlur('email')}
-                      value={values.email}
-                      returnKeyType="next"
-                      autoCapitalize="none"
-                      style={styles.textInput}
-                      allowFontScaling={false}
-                      placeholderTextColor={colors.borderGray}
-                    />
+    <Div backgroundColor={colors.brown}>
+      <ImageBackground source={images.backgroundLogin} style={styles.imageBackground}>
+        <Div flex={1} middle>
+          <Div flex={0.4} />
+          <Div center>
+            <Text medium white h2>
+              {'Đăng nhập'.toUpperCase()}
+            </Text>
+          </Div>
+          <Div flex={1}>
+            <Formik
+              validationSchema={loginValidationSchema}
+              initialValues={variablesLogin}
+              validateOnBlur
+              onSubmit={onSubmitLogin}>
+              {({ handleChange, handleBlur, handleSubmit, values, errors, isValid }) => (
+                <Div flex={1} margin={[sizes.base, sizes.base * 2]}>
+                  <Div>
+                    <Div
+                      mt={sizes.base}
+                      radius={sizes.radius * 3}
+                      pl={sizes.base}
+                      height={sizes.base * 6}
+                      shadow
+                      backgroundColor={colors.brownOpacity}>
+                      <TextInput
+                        placeholder="Số điện thoại / Email"
+                        onChangeText={handleChange('email')}
+                        onBlur={handleBlur('email')}
+                        value={values.email}
+                        returnKeyType="next"
+                        autoCapitalize="none"
+                        style={styles.textInput}
+                        allowFontScaling={false}
+                        placeholderTextColor={colors.white}
+                      />
+                    </Div>
+                    <Div mt={sizes.base / 2}>
+                      <Text caption italic pink medium>
+                        {errors.email && errors.email}
+                      </Text>
+                    </Div>
                   </Div>
-                  <Div mt={sizes.base / 2}>
-                    <Text caption italic pink medium>
-                      {errors.email && errors.email}
-                    </Text>
+                  <Div>
+                    <Div
+                      mt={sizes.base}
+                      radius={sizes.radius * 3}
+                      pl={sizes.base}
+                      height={sizes.base * 6}
+                      shadow
+                      backgroundColor={colors.brownOpacity}>
+                      <TextInput
+                        placeholder="Mật khẩu"
+                        onChangeText={handleChange('password')}
+                        onBlur={handleBlur('password')}
+                        value={values.password}
+                        secureTextEntry
+                        returnKeyType="done"
+                        // @ts-ignore
+                        onSubmitEditing={handleSubmit}
+                        style={styles.textInput}
+                        allowFontScaling={false}
+                        placeholderTextColor={colors.white}
+                      />
+                    </Div>
+                    <Div mt={sizes.base / 2}>
+                      <Text caption italic pink medium>
+                        {errors.password && errors.password}
+                      </Text>
+                    </Div>
                   </Div>
-                </Div>
-                <Div>
-                  <Div
-                    mt={sizes.base}
-                    borderWidth={1}
-                    radius={sizes.radius}
-                    pl={sizes.base}
-                    height={sizes.base * 5}
-                    backgroundColor={colors.white}>
-                    <TextInput
-                      placeholder="Password"
-                      onChangeText={handleChange('password')}
-                      onBlur={handleBlur('password')}
-                      value={values.password}
-                      secureTextEntry
-                      returnKeyType="done"
-                      // @ts-ignore
-                      onSubmitEditing={handleSubmit}
-                      style={styles.textInput}
-                      allowFontScaling={false}
-                      placeholderTextColor={colors.borderGray}
-                    />
+                  <Div row space="between">
+                    <Div flex={1} />
+                    <Div mr={sizes.base * 2}>
+                      <TouchableOpacity>
+                        <Text white>Quên mật khẩu</Text>
+                      </TouchableOpacity>
+                    </Div>
                   </Div>
-                  <Div mt={sizes.base / 2}>
-                    <Text caption italic pink medium>
-                      {errors.password && errors.password}
-                    </Text>
-                  </Div>
-                </Div>
-                <Div row space="between">
-                  <TouchableOpacity>
-                    <Text white>Quên mật khẩu</Text>
+                  {/* @ts-ignore */}
+                  <TouchableOpacity onPress={handleSubmit} disabled={!isValid}>
+                    <Div
+                      backgroundColor={colors.lightOrange}
+                      padding={sizes.base}
+                      radius={sizes.radius * 4}
+                      center
+                      middle
+                      centerSelf
+                      shadow
+                      height={sizes.base * 5}
+                      width={sizes.base * 20}
+                      mt={sizes.base * 4}>
+                      <Text title black semibold>
+                        Đăng nhập
+                      </Text>
+                    </Div>
                   </TouchableOpacity>
-                  <TouchableOpacity onPress={onPressSignUp}>
-                    <Text white>Đăng ký</Text>
-                  </TouchableOpacity>
                 </Div>
-                {/* @ts-ignore */}
-                <TouchableOpacity onPress={handleSubmit} disabled={!isValid}>
-                  <Div
-                    black
-                    padding={sizes.base}
-                    radius={sizes.radius * 4}
-                    center
-                    middle
-                    centerSelf
-                    height={sizes.base * 5}
-                    width={sizes.base * 20}
-                    mt={sizes.base * 4}>
-                    <Text header white semibold>
-                      Đăng nhập
-                    </Text>
-                  </Div>
-                </TouchableOpacity>
-              </Div>
-            )}
-          </Formik>
+              )}
+            </Formik>
+          </Div>
         </Div>
-      </Div>
-      {loading && <AppLoading />}
+        {loading && <AppLoading />}
+      </ImageBackground>
     </Div>
   );
 };
 
 const styles = StyleSheet.create({
-  image: {
-    width: '100%',
-    height: '100%',
-  },
-  bottomRadius: {
-    borderBottomLeftRadius: sizes.radius * 7,
-    borderBottomRightRadius: sizes.radius * 7,
+  imageBackground: {
+    width: WINDOW_WIDTH,
+    height: WINDOW_HEIGHT,
   },
   textInput: {
     width: '100%',
     height: '100%',
     alignItems: 'center',
     fontFamily: fonts.robotoRegular,
-    color: colors.black,
+    color: colors.white,
+    fontSize: sizes.header,
   },
 });

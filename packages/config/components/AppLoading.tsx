@@ -16,7 +16,7 @@ export const AppLoading: React.FC = () => {
       center
       middle
       backgroundColor={colors.blackOpacity}>
-      <ActivityIndicator color={colors.blue} size="large" />
+      <ActivityIndicator color={colors.brown} size="large" />
     </Div>
   );
 };

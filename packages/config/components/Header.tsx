@@ -13,6 +13,7 @@ export interface IPropsHeader {
   isBack?: boolean;
   isSearch?: boolean;
   textSearch?: string;
+  title?: string;
   onChangeSearch?: (text: string) => void;
   onSearch?: () => void;
 }
@@ -21,11 +22,12 @@ export const Header: React.FC<IPropsHeader> = ({
   isBack,
   isSearch,
   textSearch = '',
+  title,
   onChangeSearch = () => null,
   onSearch = () => null,
 }) => {
   const { goBack } = navigationUtils;
-  const [isShowSearch, setIsShowSearch] = useState(false);
+  const [isShowSearch, setIsShowSearch] = useState(true);
 
   const _onSearch = () => {
     isShowSearch ? onSearch() : setIsShowSearch(true);
@@ -34,18 +36,32 @@ export const Header: React.FC<IPropsHeader> = ({
     return isBack ? (
       <Div flex={0.5}>
         <TouchableOpacity onPress={goBack} activeOpacity={0.7}>
-          <Icon name="arrow-back-ios" size={sizes.base * 3} color={colors.white} />
+          <Div
+            height={'100%'}
+            width={DEFAULT_NAVBAR_HEIGHT}
+            backgroundColor={colors.grayOpacity}
+            center
+            radius={sizes.radius * 3}
+            middle>
+            <Icon name="arrow-back-ios" size={sizes.base * 3} color={colors.white} />
+          </Div>
         </TouchableOpacity>
       </Div>
-    ) : (
-      <Div flex={0.5} />
-    );
+    ) : null;
   };
   const renderSearchButton = () => {
     return isSearch ? (
-      <Div flex={0.5} alignRight>
+      <Div>
         <TouchableOpacity onPress={_onSearch} activeOpacity={0.7}>
-          <Icon name="search" size={sizes.base * 3} color={colors.white} />
+          <Div
+            height={'100%'}
+            width={DEFAULT_NAVBAR_HEIGHT}
+            backgroundColor={colors.grayOpacity}
+            center
+            radius={sizes.radius * 3}
+            middle>
+            <Icon name="search" size={sizes.base * 4} color={colors.white} />
+          </Div>
         </TouchableOpacity>
       </Div>
     ) : (
@@ -53,36 +69,40 @@ export const Header: React.FC<IPropsHeader> = ({
     );
   };
   const renderSearch = () => {
-    return isShowSearch ? (
+    return isShowSearch && isSearch ? (
       <Div flex={4}>
         <TextInput
           value={textSearch}
           onChangeText={onChangeSearch}
           style={styles.input}
-          placeholder="Search"
+          placeholder="Tìm kiếm"
           returnKeyType="search"
           allowFontScaling={false}
-          placeholderTextColor={colors.borderGray}
+          placeholderTextColor={colors.darkOpacity}
           onSubmitEditing={onSearch}
         />
       </Div>
     ) : (
-      <Div flex={2} center>
-        <Image source={images.logo} style={styles.image} />
+      <Div flex={4}>
+        <Text black bold title>
+          {title}
+        </Text>
       </Div>
     );
   };
   return (
     <Div
-      width={SCREEN_WIDTH}
+      width={SCREEN_WIDTH - sizes.base * 4}
       height={DEFAULT_NAVBAR_HEIGHT}
       row
-      padding={[sizes.base, sizes.base * 2]}
+      margin={[0, sizes.base * 2]}
       center
-      backgroundColor={colors.whisper}>
+      radius={sizes.radius * 3}
+      overflow="hidden"
+      backgroundColor={colors.grayOpacity}>
       {renderBackButton()}
-      {renderSearch()}
       {renderSearchButton()}
+      {renderSearch()}
     </Div>
   );
 };
@@ -90,11 +110,10 @@ export const Header: React.FC<IPropsHeader> = ({
 const styles = StyleSheet.create({
   input: {
     flex: 1,
-    backgroundColor: colors.white,
-    borderRadius: sizes.radius * 3,
     paddingHorizontal: sizes.base,
     fontSize: sizes.body,
     fontFamily: fonts.robotoRegular,
+    color: colors.darkOpacity,
   },
   image: {
     height: DEFAULT_NAVBAR_HEIGHT,

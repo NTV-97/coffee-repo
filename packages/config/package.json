@@ -9,6 +9,7 @@
     "build:ts": "node scripts/build-ts-script"
   },
   "dependencies": {
+    "@react-navigation/bottom-tabs": "^6.5.7",
     "@rollup/plugin-alias": "^4.0.2",
     "acorn-jsx": "^5.3.2",
     "coffeeapp": "0.0.1",

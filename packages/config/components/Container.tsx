@@ -1,14 +1,15 @@
-import { SafeAreaView } from 'react-native';
+import { SafeAreaView, ScrollView } from 'react-native';
 import React from 'react';
 import { Div, IPropsDiv } from './base';
 import { BOTTOM_SPACE } from '../constants';
+import { Header } from './Header';
 
 interface IPropsContainer {
   isHeader?: boolean;
   isBack?: boolean;
   title?: string;
   isRightClose?: boolean;
-  isDrawer?: boolean;
+  isScroll?: boolean;
 }
 
 export const Container: React.FC<IPropsContainer & IPropsDiv> = ({
@@ -16,18 +17,20 @@ export const Container: React.FC<IPropsContainer & IPropsDiv> = ({
   isHeader = false,
   title = '',
   isRightClose = false,
-  isDrawer = false,
+  isScroll = false,
   children,
   ...props
 }) => {
   return (
     <Div flex={1} white {...props}>
-      <SafeAreaView>
-        {/* {isHeader && (
-          <Header isBack={isBack} title={title} isRightClose={isRightClose} isDrawer={isDrawer} />
-        )} */}
-      </SafeAreaView>
-      {children}
+      <SafeAreaView>{isHeader && <Header isBack={isBack} title={title} />}</SafeAreaView>
+      {isScroll ? (
+        <ScrollView showsHorizontalScrollIndicator={false} showsVerticalScrollIndicator={false}>
+          {children}
+        </ScrollView>
+      ) : (
+        children
+      )}
     </Div>
   );
 };

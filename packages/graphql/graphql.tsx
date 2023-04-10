@@ -137,7 +137,8 @@ export type MutationLoginArgs = {
 };
 
 export type MutationPlaceOrderArgs = {
-  products: Array<ProductOrderInput>;
+  idCart: Scalars['ID'];
+  note?: InputMaybe<Scalars['String']>;
 };
 
 export type MutationRemoveFromCartArgs = {
@@ -169,12 +170,23 @@ export type MutationUpdateProductArgs = {
 
 export type Order = {
   __typename?: 'Order';
-  createdAt: Scalars['Date'];
+  createdAt?: Maybe<Scalars['Date']>;
   id: Scalars['ID'];
-  products: Array<ProductOrder>;
+  items: Array<OrderItem>;
+  note: Scalars['String'];
   status: OrderStatus;
-  total: Scalars['Float'];
+  totalPrice: Scalars['Float'];
+  updatedAt?: Maybe<Scalars['Date']>;
   user: User;
+};
+
+export type OrderItem = {
+  __typename?: 'OrderItem';
+  price: Scalars['Float'];
+  product?: Maybe<Product>;
+  quantity: Scalars['Int'];
+  size: Scalars['String'];
+  toppings?: Maybe<Array<Maybe<Scalars['String']>>>;
 };
 
 export enum OrderStatus {
@@ -217,43 +229,28 @@ export type ProductInput = {
   price: Scalars['Float'];
 };
 
-export type ProductOrder = {
-  __typename?: 'ProductOrder';
-  product: Product;
-  quantity: Scalars['Int'];
-};
-
-export type ProductOrderInput = {
-  productId: Scalars['ID'];
-  quantity: Scalars['Int'];
-};
-
 export type Query = {
   __typename?: 'Query';
   getCart?: Maybe<Cart>;
   getCategories: Array<Category>;
   getCategory?: Maybe<Category>;
+  getOrder?: Maybe<Order>;
+  getOrders: Array<Order>;
   getProduct?: Maybe<Product>;
   getProducts?: Maybe<Array<Maybe<Product>>>;
   getUser: User;
   getUsers?: Maybe<Array<User>>;
-  order?: Maybe<Order>;
-  orders: Array<Order>;
 };
 
 export type QueryGetCategoryArgs = {
   id: Scalars['ID'];
 };
 
+export type QueryGetOrderArgs = {
+  id: Scalars['ID'];
+};
+
 export type QueryGetProductArgs = {
-  id: Scalars['ID'];
-};
-
-export type QueryGetUserArgs = {
-  id: Scalars['ID'];
-};
-
-export type QueryOrderArgs = {
   id: Scalars['ID'];
 };
 
@@ -333,6 +330,62 @@ export type AddToCartMutation = {
         name: string;
         price: number;
         image?: string | null;
+      } | null;
+    }>;
+  } | null;
+};
+
+export type CancelOrderMutationVariables = Exact<{
+  id: Scalars['ID'];
+}>;
+
+export type CancelOrderMutation = {
+  __typename?: 'Mutation';
+  cancelOrder?: {
+    __typename?: 'Order';
+    id: string;
+    totalPrice: number;
+    status: OrderStatus;
+    note: string;
+    createdAt?: any | null;
+    updatedAt?: any | null;
+    user: {
+      __typename?: 'User';
+      id: string;
+      name?: string | null;
+      phoneNumber: string;
+      address?: string | null;
+      email: string;
+    };
+    items: Array<{
+      __typename?: 'OrderItem';
+      quantity: number;
+      size: string;
+      toppings?: Array<string | null> | null;
+      price: number;
+      product?: {
+        __typename?: 'Product';
+        id: string;
+        name: string;
+        price: number;
+        image?: string | null;
+        description?: string | null;
+        createdAt: any;
+        updatedAt: any;
+        category: {
+          __typename?: 'Category';
+          id: string;
+          name: string;
+          image?: string | null;
+          description?: string | null;
+          createdAt: any;
+          updatedAt: any;
+        };
+        details?: {
+          __typename?: 'ProductDetail';
+          size?: Array<{ __typename?: 'Size'; name: string; price: number } | null> | null;
+          topping?: Array<{ __typename?: 'Topping'; name: string; price: number } | null> | null;
+        } | null;
       } | null;
     }>;
   } | null;
@@ -484,6 +537,63 @@ export type LoginMutationVariables = Exact<{
 export type LoginMutation = {
   __typename?: 'Mutation';
   login: { __typename?: 'Login'; message: string; token?: string | null };
+};
+
+export type PlaceOrderMutationVariables = Exact<{
+  idCart: Scalars['ID'];
+  note?: InputMaybe<Scalars['String']>;
+}>;
+
+export type PlaceOrderMutation = {
+  __typename?: 'Mutation';
+  placeOrder?: {
+    __typename?: 'Order';
+    id: string;
+    totalPrice: number;
+    status: OrderStatus;
+    note: string;
+    createdAt?: any | null;
+    updatedAt?: any | null;
+    user: {
+      __typename?: 'User';
+      id: string;
+      name?: string | null;
+      phoneNumber: string;
+      address?: string | null;
+      email: string;
+    };
+    items: Array<{
+      __typename?: 'OrderItem';
+      quantity: number;
+      size: string;
+      toppings?: Array<string | null> | null;
+      price: number;
+      product?: {
+        __typename?: 'Product';
+        id: string;
+        name: string;
+        price: number;
+        image?: string | null;
+        description?: string | null;
+        createdAt: any;
+        updatedAt: any;
+        category: {
+          __typename?: 'Category';
+          id: string;
+          name: string;
+          image?: string | null;
+          description?: string | null;
+          createdAt: any;
+          updatedAt: any;
+        };
+        details?: {
+          __typename?: 'ProductDetail';
+          size?: Array<{ __typename?: 'Size'; name: string; price: number } | null> | null;
+          topping?: Array<{ __typename?: 'Topping'; name: string; price: number } | null> | null;
+        } | null;
+      } | null;
+    }>;
+  } | null;
 };
 
 export type RemoveFromCartMutationVariables = Exact<{
@@ -690,6 +800,116 @@ export type GetCategoryQuery = {
   } | null;
 };
 
+export type GetOrderQueryVariables = Exact<{
+  id: Scalars['ID'];
+}>;
+
+export type GetOrderQuery = {
+  __typename?: 'Query';
+  getOrder?: {
+    __typename?: 'Order';
+    id: string;
+    totalPrice: number;
+    status: OrderStatus;
+    note: string;
+    createdAt?: any | null;
+    updatedAt?: any | null;
+    user: {
+      __typename?: 'User';
+      id: string;
+      name?: string | null;
+      phoneNumber: string;
+      address?: string | null;
+      email: string;
+    };
+    items: Array<{
+      __typename?: 'OrderItem';
+      quantity: number;
+      size: string;
+      toppings?: Array<string | null> | null;
+      price: number;
+      product?: {
+        __typename?: 'Product';
+        id: string;
+        name: string;
+        price: number;
+        image?: string | null;
+        description?: string | null;
+        createdAt: any;
+        updatedAt: any;
+        category: {
+          __typename?: 'Category';
+          id: string;
+          name: string;
+          image?: string | null;
+          description?: string | null;
+          createdAt: any;
+          updatedAt: any;
+        };
+        details?: {
+          __typename?: 'ProductDetail';
+          size?: Array<{ __typename?: 'Size'; name: string; price: number } | null> | null;
+          topping?: Array<{ __typename?: 'Topping'; name: string; price: number } | null> | null;
+        } | null;
+      } | null;
+    }>;
+  } | null;
+};
+
+export type GetOrdersQueryVariables = Exact<{ [key: string]: never }>;
+
+export type GetOrdersQuery = {
+  __typename?: 'Query';
+  getOrders: Array<{
+    __typename?: 'Order';
+    id: string;
+    totalPrice: number;
+    status: OrderStatus;
+    note: string;
+    createdAt?: any | null;
+    updatedAt?: any | null;
+    user: {
+      __typename?: 'User';
+      id: string;
+      name?: string | null;
+      phoneNumber: string;
+      address?: string | null;
+      email: string;
+    };
+    items: Array<{
+      __typename?: 'OrderItem';
+      quantity: number;
+      size: string;
+      toppings?: Array<string | null> | null;
+      price: number;
+      product?: {
+        __typename?: 'Product';
+        id: string;
+        name: string;
+        price: number;
+        image?: string | null;
+        description?: string | null;
+        createdAt: any;
+        updatedAt: any;
+        category: {
+          __typename?: 'Category';
+          id: string;
+          name: string;
+          image?: string | null;
+          description?: string | null;
+          createdAt: any;
+          updatedAt: any;
+        };
+        details?: {
+          __typename?: 'ProductDetail';
+          size?: Array<{ __typename?: 'Size'; name: string; price: number } | null> | null;
+          topping?: Array<{ __typename?: 'Topping'; name: string; price: number } | null> | null;
+        } | null;
+      } | null;
+    }>;
+  }>;
+};
+
 export type GetProductQueryVariables = Exact<{
   id: Scalars['ID'];
 }>;
@@ -748,9 +968,7 @@ export type GetProductsQuery = {
   } | null> | null;
 };
 
-export type GetUserQueryVariables = Exact<{
-  id: Scalars['ID'];
-}>;
+export type GetUserQueryVariables = Exact<{ [key: string]: never }>;
 
 export type GetUserQuery = {
   __typename?: 'Query';
@@ -842,6 +1060,95 @@ export type AddToCartMutationResult = Apollo.MutationResult<AddToCartMutation>;
 export type AddToCartMutationOptions = Apollo.BaseMutationOptions<
   AddToCartMutation,
   AddToCartMutationVariables
+>;
+export const CancelOrderDocument = gql`
+  mutation CancelOrder($id: ID!) {
+    cancelOrder(id: $id) {
+      id
+      user {
+        id
+        name
+        phoneNumber
+        address
+        email
+      }
+      items {
+        product {
+          id
+          name
+          price
+          image
+          category {
+            id
+            name
+            image
+            description
+            createdAt
+            updatedAt
+          }
+          description
+          details {
+            size {
+              name
+              price
+            }
+            topping {
+              name
+              price
+            }
+          }
+          createdAt
+          updatedAt
+        }
+        quantity
+        size
+        toppings
+        price
+      }
+      totalPrice
+      status
+      note
+      createdAt
+      updatedAt
+    }
+  }
+`;
+export type CancelOrderMutationFn = Apollo.MutationFunction<
+  CancelOrderMutation,
+  CancelOrderMutationVariables
+>;
+
+/**
+ * __useCancelOrderMutation__
+ *
+ * To run a mutation, you first call `useCancelOrderMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCancelOrderMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [cancelOrderMutation, { data, loading, error }] = useCancelOrderMutation({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useCancelOrderMutation(
+  baseOptions?: Apollo.MutationHookOptions<CancelOrderMutation, CancelOrderMutationVariables>,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useMutation<CancelOrderMutation, CancelOrderMutationVariables>(
+    CancelOrderDocument,
+    options,
+  );
+}
+export type CancelOrderMutationHookResult = ReturnType<typeof useCancelOrderMutation>;
+export type CancelOrderMutationResult = Apollo.MutationResult<CancelOrderMutation>;
+export type CancelOrderMutationOptions = Apollo.BaseMutationOptions<
+  CancelOrderMutation,
+  CancelOrderMutationVariables
 >;
 export const ClearCartDocument = gql`
   mutation clearCart {
@@ -1239,6 +1546,96 @@ export type LoginMutationResult = Apollo.MutationResult<LoginMutation>;
 export type LoginMutationOptions = Apollo.BaseMutationOptions<
   LoginMutation,
   LoginMutationVariables
+>;
+export const PlaceOrderDocument = gql`
+  mutation PlaceOrder($idCart: ID!, $note: String) {
+    placeOrder(idCart: $idCart, note: $note) {
+      id
+      user {
+        id
+        name
+        phoneNumber
+        address
+        email
+      }
+      items {
+        product {
+          id
+          name
+          price
+          image
+          category {
+            id
+            name
+            image
+            description
+            createdAt
+            updatedAt
+          }
+          description
+          details {
+            size {
+              name
+              price
+            }
+            topping {
+              name
+              price
+            }
+          }
+          createdAt
+          updatedAt
+        }
+        quantity
+        size
+        toppings
+        price
+      }
+      totalPrice
+      status
+      note
+      createdAt
+      updatedAt
+    }
+  }
+`;
+export type PlaceOrderMutationFn = Apollo.MutationFunction<
+  PlaceOrderMutation,
+  PlaceOrderMutationVariables
+>;
+
+/**
+ * __usePlaceOrderMutation__
+ *
+ * To run a mutation, you first call `usePlaceOrderMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `usePlaceOrderMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [placeOrderMutation, { data, loading, error }] = usePlaceOrderMutation({
+ *   variables: {
+ *      idCart: // value for 'idCart'
+ *      note: // value for 'note'
+ *   },
+ * });
+ */
+export function usePlaceOrderMutation(
+  baseOptions?: Apollo.MutationHookOptions<PlaceOrderMutation, PlaceOrderMutationVariables>,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useMutation<PlaceOrderMutation, PlaceOrderMutationVariables>(
+    PlaceOrderDocument,
+    options,
+  );
+}
+export type PlaceOrderMutationHookResult = ReturnType<typeof usePlaceOrderMutation>;
+export type PlaceOrderMutationResult = Apollo.MutationResult<PlaceOrderMutation>;
+export type PlaceOrderMutationOptions = Apollo.BaseMutationOptions<
+  PlaceOrderMutation,
+  PlaceOrderMutationVariables
 >;
 export const RemoveFromCartDocument = gql`
   mutation removeFromCart($cartItemIndex: Int!) {
@@ -1713,6 +2110,179 @@ export type GetCategoryQueryResult = Apollo.QueryResult<
 export function refetchGetCategoryQuery(variables: GetCategoryQueryVariables) {
   return { query: GetCategoryDocument, variables: variables };
 }
+export const GetOrderDocument = gql`
+  query GetOrder($id: ID!) {
+    getOrder(id: $id) {
+      id
+      user {
+        id
+        name
+        phoneNumber
+        address
+        email
+      }
+      items {
+        product {
+          id
+          name
+          price
+          image
+          category {
+            id
+            name
+            image
+            description
+            createdAt
+            updatedAt
+          }
+          description
+          details {
+            size {
+              name
+              price
+            }
+            topping {
+              name
+              price
+            }
+          }
+          createdAt
+          updatedAt
+        }
+        quantity
+        size
+        toppings
+        price
+      }
+      totalPrice
+      status
+      note
+      createdAt
+      updatedAt
+    }
+  }
+`;
+
+/**
+ * __useGetOrderQuery__
+ *
+ * To run a query within a React component, call `useGetOrderQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetOrderQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetOrderQuery({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useGetOrderQuery(
+  baseOptions: Apollo.QueryHookOptions<GetOrderQuery, GetOrderQueryVariables>,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useQuery<GetOrderQuery, GetOrderQueryVariables>(GetOrderDocument, options);
+}
+export function useGetOrderLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<GetOrderQuery, GetOrderQueryVariables>,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useLazyQuery<GetOrderQuery, GetOrderQueryVariables>(GetOrderDocument, options);
+}
+export type GetOrderQueryHookResult = ReturnType<typeof useGetOrderQuery>;
+export type GetOrderLazyQueryHookResult = ReturnType<typeof useGetOrderLazyQuery>;
+export type GetOrderQueryResult = Apollo.QueryResult<GetOrderQuery, GetOrderQueryVariables>;
+export function refetchGetOrderQuery(variables: GetOrderQueryVariables) {
+  return { query: GetOrderDocument, variables: variables };
+}
+export const GetOrdersDocument = gql`
+  query GetOrders {
+    getOrders {
+      id
+      user {
+        id
+        name
+        phoneNumber
+        address
+        email
+      }
+      items {
+        product {
+          id
+          name
+          price
+          image
+          category {
+            id
+            name
+            image
+            description
+            createdAt
+            updatedAt
+          }
+          description
+          details {
+            size {
+              name
+              price
+            }
+            topping {
+              name
+              price
+            }
+          }
+          createdAt
+          updatedAt
+        }
+        quantity
+        size
+        toppings
+        price
+      }
+      totalPrice
+      status
+      note
+      createdAt
+      updatedAt
+    }
+  }
+`;
+
+/**
+ * __useGetOrdersQuery__
+ *
+ * To run a query within a React component, call `useGetOrdersQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetOrdersQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetOrdersQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useGetOrdersQuery(
+  baseOptions?: Apollo.QueryHookOptions<GetOrdersQuery, GetOrdersQueryVariables>,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useQuery<GetOrdersQuery, GetOrdersQueryVariables>(GetOrdersDocument, options);
+}
+export function useGetOrdersLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<GetOrdersQuery, GetOrdersQueryVariables>,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useLazyQuery<GetOrdersQuery, GetOrdersQueryVariables>(GetOrdersDocument, options);
+}
+export type GetOrdersQueryHookResult = ReturnType<typeof useGetOrdersQuery>;
+export type GetOrdersLazyQueryHookResult = ReturnType<typeof useGetOrdersLazyQuery>;
+export type GetOrdersQueryResult = Apollo.QueryResult<GetOrdersQuery, GetOrdersQueryVariables>;
+export function refetchGetOrdersQuery(variables?: GetOrdersQueryVariables) {
+  return { query: GetOrdersDocument, variables: variables };
+}
 export const GetProductDocument = gql`
   query getProduct($id: ID!) {
     getProduct(id: $id) {
@@ -1850,8 +2420,8 @@ export function refetchGetProductsQuery(variables?: GetProductsQueryVariables) {
   return { query: GetProductsDocument, variables: variables };
 }
 export const GetUserDocument = gql`
-  query GetUser($id: ID!) {
-    getUser(id: $id) {
+  query GetUser {
+    getUser {
       id
       name
       phoneNumber
@@ -1873,12 +2443,11 @@ export const GetUserDocument = gql`
  * @example
  * const { data, loading, error } = useGetUserQuery({
  *   variables: {
- *      id: // value for 'id'
  *   },
  * });
  */
 export function useGetUserQuery(
-  baseOptions: Apollo.QueryHookOptions<GetUserQuery, GetUserQueryVariables>,
+  baseOptions?: Apollo.QueryHookOptions<GetUserQuery, GetUserQueryVariables>,
 ) {
   const options = { ...defaultOptions, ...baseOptions };
   return Apollo.useQuery<GetUserQuery, GetUserQueryVariables>(GetUserDocument, options);
@@ -1892,7 +2461,7 @@ export function useGetUserLazyQuery(
 export type GetUserQueryHookResult = ReturnType<typeof useGetUserQuery>;
 export type GetUserLazyQueryHookResult = ReturnType<typeof useGetUserLazyQuery>;
 export type GetUserQueryResult = Apollo.QueryResult<GetUserQuery, GetUserQueryVariables>;
-export function refetchGetUserQuery(variables: GetUserQueryVariables) {
+export function refetchGetUserQuery(variables?: GetUserQueryVariables) {
   return { query: GetUserDocument, variables: variables };
 }
 export const GetUsersDocument = gql`
