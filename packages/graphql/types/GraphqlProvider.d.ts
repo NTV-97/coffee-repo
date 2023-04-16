@@ -1,6 +1,7 @@
 import React from 'react';
 type IPropsGraphqlProvider = {
   children?: React.ReactNode | React.ReactNode[];
+  token?: string;
 };
 export declare class GraphqlProvider extends React.Component<
   IPropsGraphqlProvider,
@@ -12,4 +13,5 @@ export declare class GraphqlProvider extends React.Component<
   componentDidMount(): void;
   render(): JSX.Element;
 }
-export {};
+declare const _default: (props: any) => JSX.Element;
+export default _default;

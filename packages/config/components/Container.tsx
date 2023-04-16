@@ -23,7 +23,9 @@ export const Container: React.FC<IPropsContainer & IPropsDiv> = ({
 }) => {
   return (
     <Div flex={1} white {...props}>
-      <SafeAreaView>{isHeader && <Header isBack={isBack} title={title} />}</SafeAreaView>
+      <SafeAreaView>
+        {isHeader && <Header isBack={isBack} title={title} isRightClose={isRightClose} />}
+      </SafeAreaView>
       {isScroll ? (
         <ScrollView showsHorizontalScrollIndicator={false} showsVerticalScrollIndicator={false}>
           {children}

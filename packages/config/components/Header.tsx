@@ -14,6 +14,7 @@ export interface IPropsHeader {
   isSearch?: boolean;
   textSearch?: string;
   title?: string;
+  isRightClose?: boolean;
   onChangeSearch?: (text: string) => void;
   onSearch?: () => void;
 }
@@ -23,6 +24,7 @@ export const Header: React.FC<IPropsHeader> = ({
   isSearch,
   textSearch = '',
   title,
+  isRightClose = false,
   onChangeSearch = () => null,
   onSearch = () => null,
 }) => {

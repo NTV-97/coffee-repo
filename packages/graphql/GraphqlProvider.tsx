@@ -1,7 +1,8 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { ApolloProvider, ApolloClient, HttpLink, InMemoryCache, ApolloLink } from '@apollo/client';
 import { constants, utils } from 'config';
 import { onError } from '@apollo/client/link/error';
+import { Context } from 'config/context';
 const { storage } = utils;
 const { API_URI } = constants;
 
@@ -50,13 +51,14 @@ const createClient = (_link: HttpLink) => {
 
 type IPropsGraphqlProvider = {
   children?: React.ReactNode | React.ReactNode[];
+  token?: string;
 };
 
 export class GraphqlProvider extends React.Component<IPropsGraphqlProvider, { token: string }> {
   constructor(props: IPropsGraphqlProvider) {
     super(props);
     this.state = {
-      token: '',
+      token: props.token ?? '',
     };
   }
   componentDidMount() {
@@ -71,8 +73,18 @@ export class GraphqlProvider extends React.Component<IPropsGraphqlProvider, { to
 
   render() {
     const { token } = this.state;
-    const link = createHttpLink(token);
+    const _token = this.props.token?.length ? this.props.token : token;
+    const link = createHttpLink(_token);
     const client = createClient(link);
     return <ApolloProvider client={client}>{this.props.children}</ApolloProvider>;
   }
 }
+const withMyHook = (Component: any) => {
+  const WrappedComponent = (props: any) => {
+    const { state } = useContext(Context);
+    return <Component {...props} token={state.token} />;
+  };
+  return WrappedComponent;
+};
+
+export default withMyHook(GraphqlProvider);

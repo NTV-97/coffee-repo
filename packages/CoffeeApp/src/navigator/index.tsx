@@ -22,11 +22,18 @@ import { ProductByCategory } from '../screens/product/ProductByCategory';
 import { UpdateUserInfo } from '../screens/user/UpdateUserInfo';
 import { OrderStatus } from '../screens/cart/OrderStatus';
 import { OrderHistory } from '../screens/cart/OrderHistory';
+import { HomeAdmin } from '../screens/home/HomeAdmin';
+import { UpdateCategory } from '../screens/category/updateCategory';
+import { UpdateProduct } from '../screens/product/UpdateProduct';
+import { CreateProduct } from '../screens/product/CreateProduct';
+import { CreateCategory } from '../screens/category/createCategory';
+import { AllOrder } from '../screens/order/Order';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { colors, sizes } from 'config/theme';
-import { Div } from 'config/components';
+import { AppLoading, Div } from 'config/components';
 import { BottomTabBarProps, createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Order } from '../screens/cart/Order';
+import { UserRole, useGetUserQuery } from 'graphql-hook';
 
 const {
   HOME,
@@ -42,6 +49,12 @@ const {
   ORDER,
   ORDER_STATUS,
   ORDER_HISTORY,
+  UPDATE_CATEGORY,
+  UPDATE_PRODUCT,
+  HOME_ADMIN,
+  CREATE_PRODUCT,
+  CREATE_CATEGORY,
+  ORDER_ADMIN,
 } = SCREEN_NAME;
 const { navigationRef } = navigationUtils;
 
@@ -131,11 +144,15 @@ const TabBarIcon = (props: BottomTabBarProps) => {
             [HOME]: 'home',
             [CART]: 'cart',
             [SETTING]: 'settings',
+            [HOME_ADMIN]: 'home',
+            [ORDER_ADMIN]: 'document',
           };
           const iconsUnFocused = {
             [HOME]: 'home-outline',
             [CART]: 'cart-outline',
             [SETTING]: 'settings-outline',
+            [HOME_ADMIN]: 'home-outline',
+            [ORDER_ADMIN]: 'document-outline',
           };
           //@ts-ignore
           const icons = focused ? iconsFocused[e.name] : iconsUnFocused[e.name];
@@ -169,19 +186,36 @@ const TabBarIcon = (props: BottomTabBarProps) => {
   );
 };
 
-const BottomTabBar: React.FC = () => {
+const BottomTabBar: React.FC = (props: any) => {
+  const { data, refetch, loading } = useGetUserQuery();
+  const user = data?.getUser;
+  const { state } = useContext(Context);
+  const { token } = state;
+  const isAdmin = user?.role === UserRole.Admin;
+  useEffect(() => {
+    refetch();
+  }, [token]);
+
   return (
     <TabBar.Navigator
       initialRouteName={HOME}
       screenOptions={() => ({
-        freezeOnBlur: true,
         headerShown: false,
         tabBarHideOnKeyboard: true,
+        lazy: true,
       })}
       // eslint-disable-next-line react/no-unstable-nested-components
-      tabBar={(props) => <TabBarIcon {...props} />}>
-      <TabBar.Screen name={HOME} component={HomeScreen} />
-      <TabBar.Screen name={CART} component={CartScreen} />
+      tabBar={(_props) => <TabBarIcon {..._props} />}>
+      <TabBar.Screen
+        name={isAdmin ? HOME_ADMIN : HOME}
+        //@ts-ignore
+        component={isAdmin ? HomeAdmin : HomeScreen}
+      />
+      <TabBar.Screen
+        name={isAdmin ? ORDER_ADMIN : CART}
+        //@ts-ignore
+        component={isAdmin ? AllOrder : CartScreen}
+      />
       <TabBar.Screen name={SETTING} component={SettingScreen} />
     </TabBar.Navigator>
   );
@@ -192,23 +226,31 @@ export const MainStack: React.FC = () => {
   const [isLoading, setIsLoading] = useState(true);
   const { state, setToken } = useContext(Context);
   const { token } = state;
+  const { data, refetch, loading } = useGetUserQuery();
+  const user = data?.getUser;
   useEffect(() => {
     const getToken = async () => {
       const _token = await storage.getItem('token');
       if (_token) {
         setToken(_token);
+        refetch();
       }
     };
     getToken();
     const timer = setTimeout(() => {
       setIsLoading(false);
-    }, 700);
+    }, 1000);
     return () => clearTimeout(timer);
   }, []);
+
+  useEffect(() => {
+    refetch();
+  }, [token]);
 
   return (
     <NavigationContainer ref={navigationRef}>
       <StatusBar barStyle={isDarkMode ? 'light-content' : 'dark-content'} />
+      {loading ? <AppLoading /> : null}
       {isLoading ? (
         <SplashScreen />
       ) : (
@@ -220,8 +262,13 @@ export const MainStack: React.FC = () => {
           initialRouteName={!token?.length ? HOME : INTRODUCTION_AUTH}>
           {token?.length ? (
             <>
-              {/* <Stack.Screen name={HOME} component={HomeScreen} /> */}
-              <Stack.Screen name={BOTTOM_TAB} component={BottomTabBar} />
+              <Stack.Screen
+                name={BOTTOM_TAB}
+                component={BottomTabBar}
+                initialParams={{
+                  HOME: { role: user?.role },
+                }}
+              />
               <Stack.Screen name={PRODUCT_DETAIL} component={ProductDetail} />
               <Stack.Screen name={PRODUCT_BY_CATEGORY} component={ProductByCategory} />
               <Stack.Screen name={ORDER} component={Order} />
@@ -229,17 +276,10 @@ export const MainStack: React.FC = () => {
               <Stack.Screen name={ORDER_HISTORY} component={OrderHistory} />
               <Stack.Group screenOptions={{ presentation: 'modal' }}>
                 <Stack.Screen name={UPDATE_USER_INFO} component={UpdateUserInfo} />
-                {/* <Stack.Screen name={SCREEN_NAME.ADD_TABLE} component={AddTable} />
-              <Stack.Screen name={SCREEN_NAME.ADD_MERCHANDISE} component={AddMerchandise} />
-              <Stack.Screen
-                name={SCREEN_NAME.ADD_MERCHANDISE_GROUP}
-                component={AddMerchandiseGroup}
-              />
-              <Stack.Screen
-                name={SCREEN_NAME.ADD_UNIT_MERCHANDISE}
-                component={AddUnitMerchandise}
-              />
-              <Stack.Screen name={SCREEN_NAME.ADD_ORDER} component={AddOrder} /> */}
+                <Stack.Screen name={UPDATE_CATEGORY} component={UpdateCategory} />
+                <Stack.Screen name={UPDATE_PRODUCT} component={UpdateProduct} />
+                <Stack.Screen name={CREATE_PRODUCT} component={CreateProduct} />
+                <Stack.Screen name={CREATE_CATEGORY} component={CreateCategory} />
               </Stack.Group>
             </>
           ) : (

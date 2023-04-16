@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { Container, Div, Divider, Text } from 'config/components';
 import { colors, sizes } from 'config/theme';
 import { images } from '../../assets';
-import { Order, useGetOrdersQuery } from 'graphql-hook';
+import { Order, OrderStatus, useGetOrdersQuery } from 'graphql-hook';
 
 export const OrderHistory: React.FC = () => {
   const { data } = useGetOrdersQuery();
@@ -13,20 +13,22 @@ export const OrderHistory: React.FC = () => {
   useEffect(() => {
     let _list: Order[] = [];
     if (cancelActivated) {
-      _list = orders?.filter((e) => e.status === 'CANCELLED') ?? [];
+      //@ts-ignore
+      _list = orders?.filter((e) => e.status === OrderStatus.Cancelled) ?? [];
     } else {
-      _list = orders?.filter((e) => e.status !== 'CANCELLED') ?? [];
+      //@ts-ignore
+      _list = orders?.filter((e) => e.status !== OrderStatus.Cancelled) ?? [];
     }
     setList(_list);
   }, [orders, cancelActivated]);
 
   const renderItem = ({ item, index }: { item: Order; index: number }) => {
     const statusString =
-      item.status === 'PROCESSING'
+      item.status === OrderStatus.Processing
         ? 'Đang làm'
-        : item.status === 'PENDING'
+        : item.status === OrderStatus.Pending
         ? 'Đợi xác nhận'
-        : item.status === 'COMPLETED'
+        : item.status === OrderStatus.Completed
         ? 'Hoàn thành'
         : 'Đã huỷ';
     return (

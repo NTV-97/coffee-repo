@@ -14,7 +14,7 @@ import { fonts, images } from '../../assets';
 import { Formik } from 'formik';
 import { sizes, colors } from 'config/theme';
 import { AppLoading, Div, Text } from 'config/components';
-import { useSignupMutation } from 'graphql-hook';
+import { UserRole, useSignupMutation } from 'graphql-hook';
 import { SignupMutationVariables } from 'graphql-hook';
 import { Context } from 'config/context';
 import { storage } from 'config/utils';
@@ -106,6 +106,7 @@ export const SignUpScreen: React.FC = () => {
         password: _variables.password,
         address: _variables.address,
         name: _variables.name,
+        role: UserRole.User,
       },
     };
     signUp({ variables });
