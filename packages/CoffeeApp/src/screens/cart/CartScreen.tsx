@@ -13,10 +13,12 @@ import { formatMoney } from '../../utils/formatMoney';
 import { BOTTOM_SPACE, DEFAULT_NAVBAR_HEIGHT, SCREEN_NAME } from 'config/constants';
 import { navigationUtils } from 'config/utils';
 import { useIsFocused } from '@react-navigation/native';
+import { RootStackParamList } from '@navigator/types';
+import { NativeStackScreenProps } from '@react-navigation/native-stack';
 
-const { ORDER } = SCREEN_NAME;
+const { ORDER, CART } = SCREEN_NAME;
 
-export const CartScreen = () => {
+export const CartScreen: React.FC<NativeStackScreenProps<RootStackParamList, typeof CART>> = () => {
   const { data, refetch } = useGetCartQuery();
   const isFocused = useIsFocused();
   const [updateCartItem] = useUpdateCartItemMutation({

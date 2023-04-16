@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { navigationUtils, storage } from 'config/utils';
 import { Container, Div, Text, Header, Divider } from 'config/components';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
@@ -14,6 +14,7 @@ import {
   useGetProductsQuery,
 } from 'graphql-hook';
 import { FlatList, Image, StyleSheet, TouchableOpacity } from 'react-native';
+import { Context } from 'config/context';
 
 const { HOME, PRODUCT_DETAIL, PRODUCT_BY_CATEGORY } = SCREEN_NAME;
 
@@ -23,21 +24,13 @@ export const HomeScreen: React.FC<NativeStackScreenProps<RootStackParamList, typ
 }) => {
   const { data } = useGetCategoriesQuery();
   const { data: dataProducts } = useGetProductsQuery();
-
-  // useEffect(() => {
-  //   storage.clear();
-  // }, [])
-
   const [textSearch, setTextSearch] = useState('');
   const onChangeSearch = (text: string) => {
     setTextSearch(text);
   };
 
-  const onPressCategory = (categoryId: string) => {
-    const filterProductById = dataProducts?.getProducts?.filter(
-      (e) => e?.category.id === categoryId,
-    );
-    navigationUtils.navigate(PRODUCT_BY_CATEGORY, { product: filterProductById });
+  const onPressCategory = (idCategory: string) => {
+    navigationUtils.navigate(PRODUCT_BY_CATEGORY, { idCategory });
   };
 
   const renderItemCategory = ({ item, index }: { item: Category; index: number }) => {
@@ -46,10 +39,13 @@ export const HomeScreen: React.FC<NativeStackScreenProps<RootStackParamList, typ
         <Div
           lightGray
           mt={sizes.base}
-          padding={[sizes.base, 0]}
+          // padding={[sizes.base, 0]}
+
           center
           width={sizes.base * 10.5}
+          height={sizes.base * 17}
           ml={sizes.base}
+          overflow="hidden"
           radius={sizes.radius * 3}>
           <Image
             source={{
@@ -57,7 +53,9 @@ export const HomeScreen: React.FC<NativeStackScreenProps<RootStackParamList, typ
             }}
             style={styles.imageCategory}
           />
-          <Text>{item.name}</Text>
+          <Div mt={sizes.base} mb={sizes.base}>
+            <Text>{item.name}</Text>
+          </Div>
         </Div>
       </TouchableOpacity>
     );
@@ -83,7 +81,11 @@ export const HomeScreen: React.FC<NativeStackScreenProps<RootStackParamList, typ
             }}
             style={styles.imageProduct}
           />
-          <Text>{item.name}</Text>
+          <Div mt={sizes.base}>
+            <Text medium numberOfLines={1}>
+              {item.name}
+            </Text>
+          </Div>
         </Div>
       </TouchableOpacity>
     );
@@ -132,16 +134,14 @@ export const HomeScreen: React.FC<NativeStackScreenProps<RootStackParamList, typ
 
 const styles = StyleSheet.create({
   imageCategory: {
-    width: sizes.base * 9,
-    height: sizes.base * 9,
+    width: '100%',
+    height: '80%',
     resizeMode: 'contain',
-    marginBottom: sizes.base,
   },
   imageProduct: {
     width: '100%',
     height: sizes.base * 20,
     resizeMode: 'contain',
-    marginBottom: sizes.base * 2,
   },
   listProducts: {
     paddingBottom: DEFAULT_NAVBAR_HEIGHT + BOTTOM_SPACE,

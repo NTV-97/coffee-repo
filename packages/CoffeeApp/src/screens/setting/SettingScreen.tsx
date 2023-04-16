@@ -1,21 +1,27 @@
 import { TouchableOpacity, View } from 'react-native';
-import React from 'react';
+import React, { useContext } from 'react';
 import { Container, Div, Text } from 'config/components';
 import { colors, sizes } from 'config/theme';
-import { useGetUserQuery } from 'graphql-hook';
+import { UserRole, useGetUserQuery } from 'graphql-hook';
 import Icon from 'react-native-vector-icons/MaterialIcons';
-import { navigationUtils } from 'config/utils';
+import { navigationUtils, storage } from 'config/utils';
 import { SCREEN_NAME } from 'config/constants';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { RootStackParamList } from '@navigator/types';
+import { Context } from 'config/context';
 
 const { UPDATE_USER_INFO, SETTING, ORDER_HISTORY } = SCREEN_NAME;
 
 export const SettingScreen: React.FC<
   NativeStackScreenProps<RootStackParamList, typeof SETTING>
 > = () => {
+  const { setToken } = useContext(Context);
   const { data } = useGetUserQuery();
   const user = data?.getUser;
+  const onPressSignOut = () => {
+    storage.clear();
+    setToken('');
+  };
   return (
     <Container backgroundColor={colors.brown}>
       <Div center>
@@ -49,22 +55,24 @@ export const SettingScreen: React.FC<
           </Text>
         </Div>
       </Div>
-      <TouchableOpacity onPress={() => navigationUtils.navigate(ORDER_HISTORY)}>
-        <Div
-          row
-          padding={[sizes.base, sizes.base * 2]}
-          backgroundColor={colors.almond}
-          margin={[sizes.base * 2, sizes.base * 2, 0]}
-          center
-          radius={sizes.radius * 2}>
-          <Icon name="text-snippet" size={sizes.base * 5} color={colors.black} />
-          <Div ml={sizes.base * 2}>
-            <Text header semibold>
-              Đơn hàng
-            </Text>
+      {user?.role === UserRole.User ? (
+        <TouchableOpacity onPress={() => navigationUtils.navigate(ORDER_HISTORY)}>
+          <Div
+            row
+            padding={[sizes.base, sizes.base * 2]}
+            backgroundColor={colors.almond}
+            margin={[sizes.base * 2, sizes.base * 2, 0]}
+            center
+            radius={sizes.radius * 2}>
+            <Icon name="text-snippet" size={sizes.base * 5} color={colors.black} />
+            <Div ml={sizes.base * 2}>
+              <Text header semibold>
+                Đơn hàng
+              </Text>
+            </Div>
           </Div>
-        </Div>
-      </TouchableOpacity>
+        </TouchableOpacity>
+      ) : null}
       <TouchableOpacity onPress={() => navigationUtils.navigate(UPDATE_USER_INFO)}>
         <Div
           row
@@ -81,6 +89,27 @@ export const SettingScreen: React.FC<
           </Div>
         </Div>
       </TouchableOpacity>
+      <Div margin={[sizes.base * 30, sizes.base * 12, 0]}>
+        <TouchableOpacity onPress={onPressSignOut}>
+          <Div
+            row
+            padding={[sizes.base, sizes.base * 2]}
+            pink
+            shadow
+            center
+            middle
+            borderWidth={1}
+            borderColor={colors.black}
+            radius={sizes.radius * 6}>
+            <Icon name="logout" size={sizes.base * 4} color={colors.black} />
+            <Div ml={sizes.base}>
+              <Text title semibold>
+                Đăng xuất
+              </Text>
+            </Div>
+          </Div>
+        </TouchableOpacity>
+      </Div>
     </Container>
   );
 };

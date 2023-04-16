@@ -78,8 +78,9 @@ export type Mutation = {
   clearCart?: Maybe<Cart>;
   createCategory: Category;
   createProduct: Product;
-  deleteCategory: Category;
-  deleteProduct?: Maybe<Product>;
+  deleteAllOrders?: Maybe<Success>;
+  deleteCategory: Success;
+  deleteProduct: Success;
   deleteUser: Success;
   editUser: User;
   login: Login;
@@ -206,6 +207,7 @@ export type ProductInput = {
 };
 export type Query = {
   __typename?: 'Query';
+  getAllOrders: Array<Order>;
   getCart?: Maybe<Cart>;
   getCategories: Array<Category>;
   getCategory?: Maybe<Category>;
@@ -231,6 +233,7 @@ export type RegisterInput = {
   name?: InputMaybe<Scalars['String']>;
   password: Scalars['String'];
   phoneNumber: Scalars['String'];
+  role: UserRole;
 };
 export type Size = {
   __typename?: 'Size';
@@ -262,7 +265,12 @@ export type User = {
   id: Scalars['ID'];
   name?: Maybe<Scalars['String']>;
   phoneNumber: Scalars['String'];
+  role: UserRole;
 };
+export declare enum UserRole {
+  Admin = 'ADMIN',
+  User = 'USER',
+}
 export type AddToCartMutationVariables = Exact<{
   items: Array<CartItemInput> | CartItemInput;
 }>;
@@ -449,13 +457,9 @@ export type DeleteCategoryMutationVariables = Exact<{
 export type DeleteCategoryMutation = {
   __typename?: 'Mutation';
   deleteCategory: {
-    __typename?: 'Category';
-    id: string;
-    name: string;
-    image?: string | null;
-    description?: string | null;
-    createdAt: any;
-    updatedAt: any;
+    __typename?: 'Success';
+    message: string;
+    success: boolean;
   };
 };
 export type DeleteProductMutationVariables = Exact<{
@@ -463,35 +467,11 @@ export type DeleteProductMutationVariables = Exact<{
 }>;
 export type DeleteProductMutation = {
   __typename?: 'Mutation';
-  deleteProduct?: {
-    __typename?: 'Product';
-    id: string;
-    name: string;
-    price: number;
-    image?: string | null;
-    description?: string | null;
-    createdAt: any;
-    updatedAt: any;
-    category: {
-      __typename?: 'Category';
-      id: string;
-      name: string;
-      image?: string | null;
-    };
-    details?: {
-      __typename?: 'ProductDetail';
-      size?: Array<{
-        __typename?: 'Size';
-        name: string;
-        price: number;
-      } | null> | null;
-      topping?: Array<{
-        __typename?: 'Topping';
-        name: string;
-        price: number;
-      } | null> | null;
-    } | null;
-  } | null;
+  deleteProduct: {
+    __typename?: 'Success';
+    message: string;
+    success: boolean;
+  };
 };
 export type EditUserMutationVariables = Exact<{
   id: Scalars['ID'];
@@ -683,6 +663,69 @@ export type UpdateCategoryMutation = {
     updatedAt: any;
   };
 };
+export type UpdateOrderStatusMutationVariables = Exact<{
+  id: Scalars['ID'];
+  status: OrderStatus;
+}>;
+export type UpdateOrderStatusMutation = {
+  __typename?: 'Mutation';
+  updateOrderStatus?: {
+    __typename?: 'Order';
+    id: string;
+    totalPrice: number;
+    status: OrderStatus;
+    note: string;
+    createdAt?: any | null;
+    updatedAt?: any | null;
+    user: {
+      __typename?: 'User';
+      id: string;
+      name?: string | null;
+      phoneNumber: string;
+      address?: string | null;
+      email: string;
+    };
+    items: Array<{
+      __typename?: 'OrderItem';
+      quantity: number;
+      size: string;
+      toppings?: Array<string | null> | null;
+      price: number;
+      product?: {
+        __typename?: 'Product';
+        id: string;
+        name: string;
+        price: number;
+        image?: string | null;
+        description?: string | null;
+        createdAt: any;
+        updatedAt: any;
+        category: {
+          __typename?: 'Category';
+          id: string;
+          name: string;
+          image?: string | null;
+          description?: string | null;
+          createdAt: any;
+          updatedAt: any;
+        };
+        details?: {
+          __typename?: 'ProductDetail';
+          size?: Array<{
+            __typename?: 'Size';
+            name: string;
+            price: number;
+          } | null> | null;
+          topping?: Array<{
+            __typename?: 'Topping';
+            name: string;
+            price: number;
+          } | null> | null;
+        } | null;
+      } | null;
+    }>;
+  } | null;
+};
 export type UpdateProductMutationVariables = Exact<{
   id: Scalars['ID'];
   product: ProductInput;
@@ -718,6 +761,68 @@ export type UpdateProductMutation = {
       } | null> | null;
     } | null;
   };
+};
+export type GetAllOrdersQueryVariables = Exact<{
+  [key: string]: never;
+}>;
+export type GetAllOrdersQuery = {
+  __typename?: 'Query';
+  getAllOrders: Array<{
+    __typename?: 'Order';
+    id: string;
+    totalPrice: number;
+    status: OrderStatus;
+    note: string;
+    createdAt?: any | null;
+    updatedAt?: any | null;
+    user: {
+      __typename?: 'User';
+      id: string;
+      name?: string | null;
+      phoneNumber: string;
+      address?: string | null;
+      email: string;
+    };
+    items: Array<{
+      __typename?: 'OrderItem';
+      quantity: number;
+      size: string;
+      toppings?: Array<string | null> | null;
+      price: number;
+      product?: {
+        __typename?: 'Product';
+        id: string;
+        name: string;
+        price: number;
+        image?: string | null;
+        description?: string | null;
+        createdAt: any;
+        updatedAt: any;
+        category: {
+          __typename?: 'Category';
+          id: string;
+          name: string;
+          image?: string | null;
+          description?: string | null;
+          createdAt: any;
+          updatedAt: any;
+        };
+        details?: {
+          __typename?: 'ProductDetail';
+          size?: Array<{
+            __typename?: 'Size';
+            name: string;
+            price: number;
+          } | null> | null;
+          topping?: Array<{
+            __typename?: 'Topping';
+            name: string;
+            price: number;
+          } | null> | null;
+        } | null;
+      } | null;
+    }>;
+  }>;
 };
 export type GetCartQueryVariables = Exact<{
   [key: string]: never;
@@ -1013,6 +1118,7 @@ export type GetUserQuery = {
     phoneNumber: string;
     address?: string | null;
     email: string;
+    role: UserRole;
   };
 };
 export type GetUsersQueryVariables = Exact<{
@@ -1326,6 +1432,31 @@ export type UpdateCategoryMutationOptions = Apollo.BaseMutationOptions<
   UpdateCategoryMutation,
   UpdateCategoryMutationVariables
 >;
+export declare const UpdateOrderStatusDocument: Apollo.DocumentNode;
+export type UpdateOrderStatusMutationFn = Apollo.MutationFunction<
+  UpdateOrderStatusMutation,
+  UpdateOrderStatusMutationVariables
+>;
+export declare function useUpdateOrderStatusMutation(
+  baseOptions?: Apollo.MutationHookOptions<
+    UpdateOrderStatusMutation,
+    UpdateOrderStatusMutationVariables
+  >,
+): Apollo.MutationTuple<
+  UpdateOrderStatusMutation,
+  Exact<{
+    id: string;
+    status: OrderStatus;
+  }>,
+  Apollo.DefaultContext,
+  Apollo.ApolloCache<any>
+>;
+export type UpdateOrderStatusMutationHookResult = ReturnType<typeof useUpdateOrderStatusMutation>;
+export type UpdateOrderStatusMutationResult = Apollo.MutationResult<UpdateOrderStatusMutation>;
+export type UpdateOrderStatusMutationOptions = Apollo.BaseMutationOptions<
+  UpdateOrderStatusMutation,
+  UpdateOrderStatusMutationVariables
+>;
 export declare const UpdateProductDocument: Apollo.DocumentNode;
 export type UpdateProductMutationFn = Apollo.MutationFunction<
   UpdateProductMutation,
@@ -1348,6 +1479,37 @@ export type UpdateProductMutationOptions = Apollo.BaseMutationOptions<
   UpdateProductMutation,
   UpdateProductMutationVariables
 >;
+export declare const GetAllOrdersDocument: Apollo.DocumentNode;
+export declare function useGetAllOrdersQuery(
+  baseOptions?: Apollo.QueryHookOptions<GetAllOrdersQuery, GetAllOrdersQueryVariables>,
+): Apollo.QueryResult<
+  GetAllOrdersQuery,
+  Exact<{
+    [key: string]: never;
+  }>
+>;
+export declare function useGetAllOrdersLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<GetAllOrdersQuery, GetAllOrdersQueryVariables>,
+): Apollo.LazyQueryResultTuple<
+  GetAllOrdersQuery,
+  Exact<{
+    [key: string]: never;
+  }>
+>;
+export type GetAllOrdersQueryHookResult = ReturnType<typeof useGetAllOrdersQuery>;
+export type GetAllOrdersLazyQueryHookResult = ReturnType<typeof useGetAllOrdersLazyQuery>;
+export type GetAllOrdersQueryResult = Apollo.QueryResult<
+  GetAllOrdersQuery,
+  GetAllOrdersQueryVariables
+>;
+export declare function refetchGetAllOrdersQuery(variables?: GetAllOrdersQueryVariables): {
+  query: Apollo.DocumentNode;
+  variables:
+    | Exact<{
+        [key: string]: never;
+      }>
+    | undefined;
+};
 export declare const GetCartDocument: Apollo.DocumentNode;
 export declare function useGetCartQuery(
   baseOptions?: Apollo.QueryHookOptions<GetCartQuery, GetCartQueryVariables>,

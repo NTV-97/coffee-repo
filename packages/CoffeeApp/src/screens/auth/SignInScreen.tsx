@@ -13,9 +13,8 @@ import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { RootStackParamList } from '@navigator/types';
 import { Context } from 'config/context';
 
-const { WINDOW_HEIGHT, SCREEN_WIDTH, WINDOW_WIDTH } = DEVICE;
-const { SIGN_IN, SIGN_UP } = SCREEN_NAME;
-const { navigate } = navigationUtils;
+const { WINDOW_HEIGHT, WINDOW_WIDTH } = DEVICE;
+const { SIGN_IN } = SCREEN_NAME;
 const { setItem } = storage;
 
 const validateEmail = (email: string | undefined) => {
