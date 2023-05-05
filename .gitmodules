@@ -1,0 +1,3 @@
+[submodule "remote-config-submodule"]
+	path = remote-config-submodule
+	url = git@github.com:NTV-97/remote-config-submodule.git
